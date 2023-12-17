@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body th:fragment="main-body">
+    <header>
+        <h1>Game</h1>
+
+        <a class="login-link" href="login.html">로그인</a>
+    </header>
+
+    <div class="banner">
+        <img src="images/banner.jpg" alt="게임 배너">
+    </div>
+
+    <nav class="navigator">
+        <ul>
+            <li><a href="#">게임</a></li>
+            <li><a href="#">자유게시판</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section class="sidebar_left">
+            <h2>Chatting</h2>
+            <p>블라블라...</p>
+        </section>
+        <section class="content">
+            <th:block layout:fragment="content"></th:block>
+        </section>
+        <section class="sidebar_right">
+            <h2>List</h2>
+            <p>블라블라...</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>Copyright &copy; 2023</p>
+    </footer>
+</body>
+</html>

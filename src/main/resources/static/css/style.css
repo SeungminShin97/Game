@@ -1,0 +1,91 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+}
+
+header {
+    background-color: #333;
+    color: white;
+    padding: 0px;
+    height: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.banner {
+    height: 200px; /* 배너의 높이 설정 */
+    background-color: #f0f0f0; /* 배너의 배경색 설정 */
+    text-align: center; /* 텍스트 가운데 정렬 */
+}
+
+.banner img {
+    max-width: 100%; /* 이미지가 부모 요소를 넘어가지 않도록 설정 */
+    max-height: 100%; /* 이미지가 부모 요소를 넘어가지 않도록 설정 */
+}
+
+.navigator {
+    display: flex;
+    margin-top: 20px;
+}
+
+.navigator ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.navigator li {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.navigator a {
+    text-decoration: none;
+    color: #999;
+    font-weight: bold;
+}
+
+.login-link {
+    text-decoration: none;
+    color: #999; /* 링크 색상 지정 */
+}
+
+
+main {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: calc(100vh - 120px);
+}
+
+.sidebar_left,
+.content,
+.sidebar_right {
+    flex: 3;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-right: 20px;
+}
+
+.content {
+    flex: 14;
+}
+
+.sidebar_right {
+    flex: 3;
+}
+
+footer {
+    background-color: #000;
+    display: flex;
+    color: #fff;
+    padding: 0px;
+    text-align: center;
+    bottom: 0;
+    width: 100%;
+    height: 40px;
+}
