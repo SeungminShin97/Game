@@ -1,26 +1,31 @@
 <!DOCTYPE html>
-<html lang="ko" layout:decorate="layout/basic" xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" layout:decorate="~{layout/basic}" xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <th:block layout:fragment="title">
     <title>홈 화면</title>
 </th:block>
 
-<th:block layout:fragment="content">
+<th:block layout:fragment="js">
+    <script th:inline="javascript" th:src="@{/js/post/list.js}"></script>
+</th:block>
+
+<th:block layout:fragment="contentFragment">
     <div class="content">
         <section>
             <!--/* 검색 */-->
             <div class="search_box">
                 <form id="searchForm" >
-                    <div class="sch_group fl">
-                        <select id="searchType" name="searchType" title="검색 유형 선택">
-                            <option value="">전체 검색</option>
-                            <option value="title">제목</option>
-                            <option value="content">내용</option>
-                            <option value="writer">작성자</option>
-                        </select>
-                        <input type="text" id="keyword" name="keyword" placeholder="키워드를 입력해 주세요." title="키워드 입력" />
-                        <button type="button" onclick="movePage(1);"><i class="fas fa-search"></i><span class="skip_info">검색</span></button>
-                    </div>
+                    <select id="searchType" name="searchType" title="검색 유형 선택">
+                        <option value="">전체 검색</option>
+                        <option value="title">제목</option>
+                        <option value="content">내용</option>
+                        <option value="writer">작성자</option>
+                    </select>
+                    <select id="categoryType" name="categoryType" title="게시판 선택">
+
+                    </select>
+                    <input type="text" id="keyword" name="keyword" placeholder="키워드를 입력해 주세요." title="키워드 입력" />
+                    <button type="button" onclick="movePage(1);"><i class="fas fa-search"></i><span class="skip_info">검색</span></button>
                 </form>
             </div>
 
@@ -53,11 +58,10 @@
 
             <!--/* 버튼 */-->
             <p class="btn_set tr">
-                <a th:href="@{/post/write}" class="btns btn_st3 btn_mid">글쓰기</a>
+                <a th:href="@{/post/write.do}" >글쓰기</a>
             </p>
         </section>
-    </div> <!--/* .content */-->
+    </div>
 </th:block>
-
 
 </html>

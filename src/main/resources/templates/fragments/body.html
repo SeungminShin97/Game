@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html
+    lang="ko"
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <body th:fragment="main-body">
     <header>
         <h1>Game</h1>
@@ -19,21 +22,25 @@
     </nav>
 
     <main>
-        <section class="sidebar_left">
+        <aside class="aside_left">
             <h2>Chatting</h2>
             <p>블라블라...</p>
-        </section>
+        </aside>
         <section class="content">
-            <th:block layout:fragment="content"></th:block>
+            <th:block layout:fragment="contentFragment"></th:block>
         </section>
-        <section class="sidebar_right">
-            <h2>List</h2>
-            <p>블라블라...</p>
-        </section>
+        <aside class="aside_right">
+            <div th:each="list : ${categoryList}">
+                <div>
+                    <a th:text="${list.category}"></a>
+                </div>
+            </div>
+        </aside>
     </main>
 
     <footer>
         <p>Copyright &copy; 2023</p>
     </footer>
+
 </body>
 </html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lan="kor" xmlns:th="http://www.thymeleaf.org">
+    <body>
+
+    <script th:inline="javascript">
+
+        /* <![CDATA[ */
+            window.onload = () => {
+                const message= [[ ${params.message} ]];
+                if(message) {
+                    alert(message);
+                }
+
+            const redirectUri = [[ ${params.redirectUri} ]];
+            location.href = redirectUri;
+            }
+    </script>
+    </body>
+</html>
