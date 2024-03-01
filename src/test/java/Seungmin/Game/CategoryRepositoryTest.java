@@ -25,6 +25,6 @@ public class CategoryRepositoryTest {
     @Test
     public void showAllCategoryTest() {
         List<Category> list = categoryRepository.findAll();
-        list.stream().forEach(System.out::println);
+        list.forEach(System.out::println);
     }
 }

@@ -1,6 +1,7 @@
 package Seungmin.Game.domain.post;
 
 import Seungmin.Game.domain.post.postDto.Post;
+import Seungmin.Game.domain.post.postDto.PostResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

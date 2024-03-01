@@ -2,7 +2,7 @@
 <html lang="ko" layout:decorate="~{layout/basic}" xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <th:block layout:fragment="title">
-    <title>홈 화면</title>
+    <title>Homepage</title>
 </th:block>
 
 <th:block layout:fragment="js">
@@ -10,10 +10,13 @@
 </th:block>
 
 <th:block layout:fragment="contentFragment">
+    <div class="categoryName">
+        <p id="categoryName" style="font-size: 20px;"></p>
+    </div>
     <div class="content">
         <section>
             <!--/* 검색 */-->
-            <div class="search_box">
+            <div>
                 <form id="searchForm" >
                     <select id="searchType" name="searchType" title="검색 유형 선택">
                         <option value="">전체 검색</option>
@@ -30,7 +33,7 @@
             </div>
 
             <!--/* 리스트 */-->
-            <table class="tb tb_col">
+            <table>
                 <colgroup>
                     <col style="width:50px;"/><col style="width:7.5%;"/><col style="width:auto;"/><col style="width:10%;"/><col style="width:15%;"/><col style="width:7.5%;"/>
                 </colgroup>
@@ -57,9 +60,7 @@
             </div>
 
             <!--/* 버튼 */-->
-            <p class="btn_set tr">
-                <a th:href="@{/post/write.do}" >글쓰기</a>
-            </p>
+            <a type="button" th:text="글쓰기" th:href="@{/post/write}"></a>
         </section>
     </div>
 </th:block>

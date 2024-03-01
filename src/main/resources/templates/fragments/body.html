@@ -5,7 +5,7 @@
     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <body th:fragment="main-body">
     <header>
-        <h1>Game</h1>
+        <h1><a href="post/list">Game</a> </h1>
 
         <a class="login-link" href="login.html">로그인</a>
     </header>
@@ -30,9 +30,12 @@
             <th:block layout:fragment="contentFragment"></th:block>
         </section>
         <aside class="aside_right">
+            <div>
+                <a class="categoryClass selected" th:text="전체글"></a>
+            </div>
             <div th:each="list : ${categoryList}">
                 <div>
-                    <a th:text="${list.category}"></a>
+                    <a class="categoryClass" th:text="${list.category}"></a>
                 </div>
             </div>
         </aside>

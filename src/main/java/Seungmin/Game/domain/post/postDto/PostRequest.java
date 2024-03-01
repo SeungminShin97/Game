@@ -8,13 +8,13 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostRequest {
 
-    private Category category;
+    private String category;
     private String title;
     private String content;
     private String writer;
     private boolean publicYn;
 
-    public Post toEntity() {
+    public Post toEntity(Category category) {
         return Post.builder()
                 .category(category)
                 .title(title)

@@ -1,47 +1,49 @@
-window.onload = () => {
-    renderPostInfo();
-}
-
-// 게시글 정보 렌더링
-function renderPostInfo() {
-    const post = [[ ${post} ]];
-
-    if(!post) {
-        initCreatedDate();
-        return false;
+/*<![CDATA[*/
+    window.onload = () => {
+        renderPostInfo();
     }
 
-    const form = document.getElementById('saveForm');
-    const fields = ['id', 'category', 'title', 'content', 'writer', 'publicYn'];
-    form.publicYn.checked = post.publicYn;
+    // 게시글 정보 렌더링
+    function renderPostInfo() {
+        const post = [[ ${post} ]];
 
-    document.getElementById('createdDate').textContent = post['createdDate'];
+        if(!post) {
+            initCreatedDate();
+            return false;
+        }
 
-    fields.forEach(field => {
-        form[field].value = post[field];
-    })
-}
+        const form = document.getElementById('saveForm');
+        const fields = ['id', 'category', 'title', 'content', 'writer', 'publicYn'];
+        form.publicYn.checked = post.publicYn;
 
+        document.getElementById('createdDate').textContent = post['createdDate'];
 
-// 등록일 초기화
-function initCreatedDate() {
-    document.getElementById('createdDate').textContent = dayjs().format('YYYY-MM-DD');
-}
-
-
-// 게시글 저장
-function savePost() {
-    const form = document.getElementById('saveForm');
-    form.publicYn.value = form.publicYn.checked;
-    const fields = [form.category, form.title, form.writer, form.content];
-    const fieldNames = ['카테고리', '제목', '작성자', '내용'];
-
-    for(let i = 0, len = fields.length; i < len; i++) {
-        isValid(fields[i], fieldNames[i]);
+        fields.forEach(field => {
+            form[field].value = post[field];
+        })
     }
 
-    document.getElementById('saveBtn').disabled = true;
-    form.action = [[ ${post == null} ]] ? '/post/save.do' : '/post/update.do';
-    form.submit();
 
-}
+    // 등록일 초기화
+    function initCreatedDate() {
+        document.getElementById('createdDate').textContent = dayjs().format('YYYY-MM-DD');
+    }
+
+
+    // 게시글 저장
+    function savePost() {
+        const form = document.getElementById('saveForm');
+        form.publicYn.value = form.publicYn.checked;
+        const fields = [form.category, form.title, form.writer, form.content];
+        const fieldNames = ['카테고리', '제목', '작성자', '내용'];
+
+        for(let i = 0, len = fields.length; i < len; i++) {
+            isValid(fields[i], fieldNames[i]);
+        }
+
+        document.getElementById('saveBtn').disabled = true;
+        form.action = [[ ${post == null} ]] ? '/post/save' : '/post/update';
+        form.submit();
+
+    }
+/*]]>*/
