@@ -6,8 +6,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 
-
-
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -51,16 +49,29 @@ public class Post extends BaseTimeEntity {
 
     public PostResponse toDto() {
         return PostResponse.builder()
+                .id(id)
                 .category(category)
                 .title(title)
                 .content(content)
                 .writer(writer)
                 .viewCnt(viewCnt)
                 .noticeYn(noticeYn)
-                .deleteYn(deleteYn)
                 .createdDate(createdDate)
                 .modifiedDate(modifiedDate)
                 .publicYn(publicYn)
                 .build();
+    }
+
+    public void updatePost(PostRequest postRequest, Category category) {
+        this.category = category;
+        this.title = postRequest.getTitle();
+        this.content = postRequest.getContent();
+        this.writer = postRequest.getWriter();
+        this.noticeYn = postRequest.isNoticeYn();
+        this.publicYn = postRequest.isPublicYn();
+    }
+
+    public void updateViewCnt() {
+        viewCnt++;
     }
 }

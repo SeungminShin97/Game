@@ -5,13 +5,9 @@
     <title>Homepage</title>
 </th:block>
 
-<th:block layout:fragment="js">
-    <script th:inline="javascript" th:src="@{/js/post/list.js}"></script>
-</th:block>
-
 <th:block layout:fragment="contentFragment">
     <div class="categoryName">
-        <p id="categoryName" style="font-size: 20px;"></p>
+        <p id="categoryName" th:text="전체글" style="font-size: 20px;"></p>
     </div>
     <div class="content">
         <section>
@@ -35,16 +31,15 @@
             <!--/* 리스트 */-->
             <table>
                 <colgroup>
-                    <col style="width:50px;"/><col style="width:7.5%;"/><col style="width:auto;"/><col style="width:10%;"/><col style="width:15%;"/><col style="width:7.5%;"/>
+                    <col style="width:7.5%;"/><col style="width:auto;"/><col style="width:15%;"/><col style="width:15%;"/><col style="width:7.5%;"/>
                 </colgroup>
                 <thead>
                 <tr>
-                    <th scope="col"><input type="checkbox"/></th>
-                    <th scope="col">번호</th>
+                    <th scope="col">id</th>
                     <th scope="col">제목</th>
                     <th scope="col">작성자</th>
                     <th scope="col">등록일</th>
-                    <th scope="col">조회</th>
+                    <th scope="col">조회수</th>
                 </tr>
                 </thead>
 
@@ -64,5 +59,77 @@
         </section>
     </div>
 </th:block>
+
+<th:block layout:fragment="js">
+<script th:inline="javascript">
+/*<![CDATA[*/
+    window.onload = () => {
+        drawPostList([[${postList}]]);
+    }
+
+    $(document).ready(function($) {
+        // 카테고리 클릭 이벤트
+        $(".categoryClass").click(function(event) {
+            updateSelectedLink($(this));
+            updatePostList($(this));
+            document.getElementById('categoryName').text = $(this).text();
+        }).hover(function() {
+            $(this).toggleClass("hovered");
+        });
+    })
+
+
+
+    // 선택한 카테고리 업데이트
+    function updateSelectedLink($link) {
+        $(".categoryClass").removeClass("selected");
+        $link.addClass("selected");
+    }
+
+    // 선택한 카테고리 게시글 출력
+    function updatePostList($link) {
+        const selectedCategoryName = $link.text();
+
+        $.ajax({
+            type: "GET",
+            url: "/post/list/" + selectedCategoryName,
+            dataType: 'json',
+            success : function (requestList) {
+                drawPostList(requestList);
+            }
+        });
+    }
+
+    // 게시글 리스트 그리기
+    function drawPostList(list) {
+        let html = '';
+
+        list.forEach(t => {
+            html += `
+                <tr>
+                    <td><a onclick="goViewPage(${t.id})">${t.id}</a></td>
+                    <td><a onclick="goViewPage(${t.id})">${t.title}</a></td>
+                    <td>${t.writer}</td>
+                    <td>${dayjs(t.createdDate).format('YYYY-MM-DD')}</td>
+                    <td>${t.viewCnt}</td>
+                </tr>
+                `
+        });
+
+        document.getElementById('list').innerHTML = html;
+    }
+
+
+    // view 페이지 이동
+    function goViewPage(postId) {
+        const url = "/post/view/" + postId;
+        window.location.href = url;
+    }
+
+
+/*]]>*/
+</script>
+</th:block>
+
 
 </html>

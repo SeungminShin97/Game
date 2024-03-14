@@ -29,12 +29,22 @@ public class PostController {
 
     // 홈 화면
     // 게시글 리스트 페이지
-    @GetMapping(value = {"/", "/post/list"})
+    @GetMapping("/")
     public String home(Model model) {
-        List<Category> list = postService.showCategoryList();
-        model.addAttribute("categoryList", list);
+        List<Category> categoryList = postService.showCategoryList();
+        model.addAttribute("categoryList", categoryList);
+        List<PostResponse> postList = postService.showPostList();
+        model.addAttribute("postList", postList);
         return "post/list";
     }
+
+    // 게시글 카테고리 변경
+    @GetMapping("/post/list/{category}")
+    @ResponseBody
+    public List<PostResponse> changePostListByCategory(@PathVariable String category) {
+         return postService.findPostByCategoryId(category);
+    }
+
 
     // 게시글 작성 페이지
     @GetMapping("/post/write")
@@ -45,7 +55,7 @@ public class PostController {
                 model.addAttribute("post", post);
             }
             else {
-                MessageDto messageDto = new MessageDto("존재하지 않는 게시글입니다.", "/post/list", RequestMethod.GET, null);
+                MessageDto messageDto = new MessageDto("존재하지 않는 게시글입니다.", "/", RequestMethod.GET, null);
                 return showMessageAndRedirect(messageDto, model);
             }
         }
@@ -58,10 +68,32 @@ public class PostController {
     @PostMapping("/post/save")
     public String savePost(@ModelAttribute final PostRequest params, Model model) {
         postService.savePost(params);
-        MessageDto messageDto = new MessageDto("게시글 생성이 완료되었습니다.", "/post/list", RequestMethod.GET, null);
+        MessageDto messageDto = new MessageDto("게시글 생성이 완료되었습니다.", "/", RequestMethod.GET, null);
         return showMessageAndRedirect(messageDto, model);
     }
 
+    // 게시글 상세 페이지
+    @GetMapping("/post/view/{postId}")
+    public String viewPost(@PathVariable Long postId, Model model) {
+        // 오른쪽 asdie 카테고리 리스트
+        List<Category> categoryList = postService.showCategoryList();
+        model.addAttribute("categoryList", categoryList);
 
+        if(postService.findPostById(postId) != null) {
+            postService.updateViewCnt(postId);
+            PostResponse post = postService.findPostByIdWithCategory(postId);
+            model.addAttribute("post", post);
+            return "post/view";
+        }
+        else
+            return showMessageAndRedirect(new MessageDto("존재하지 않는 게시글입니다.", "/", RequestMethod.GET, null), model);
+    }
+
+    // 게시글 수정 페이지
+    @PutMapping("/post/update")
+    public String updatePost(@ModelAttribute final PostRequest params, Model model) {
+        postService.updatePost(params);
+        return showMessageAndRedirect(new MessageDto("게시글 수정이 완료되었습니다.", "/", RequestMethod.GET, null), model);
+    }
 
 }

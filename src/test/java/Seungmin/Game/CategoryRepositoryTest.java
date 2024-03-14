@@ -18,8 +18,10 @@ public class CategoryRepositoryTest {
 
     @Test
     public void saveCategoryTest() {
-        Category category = Category.builder().category("test1").build();
-        categoryRepository.save(category);
+        for(int i = 1; i <= 10; i++) {
+            Category category = Category.builder().category("test" + i).build();
+            categoryRepository.save(category);
+        }
     }
 
     @Test

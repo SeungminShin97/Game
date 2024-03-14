@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko" layout:decorate="~{layout/basic}" xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<th:block layout:fragment="title">
+	<title th:text="${post.title}"></title>
+</th:block>
+
+<th:block layout:fragment="contentFragment">
+	<table>
+		<colgroup>
+			<col style="width:15%;" /><col style="width:35%;" /><col style="width:15%;" /><col style="width:35%;" />
+		</colgroup>
+		<tbody id="postInfo">
+		<tr>
+			<th scope="row">공개 여부</th>
+			<td th:text="(${post.publicYn}) ? '공개' : 비공개"></td>
+
+			<th scope="row">등록일</th>
+<!--			<td colspan="3" th:text="${post.createdDate}"></td>-->
+			<td colspan="3" id="createdDate"></td>
+		</tr>
+
+		<tr>
+			<th>게시판</th>
+			<td th:text="${post.category.category}"></td>
+
+			<th id="modified"></th>
+			<td colspan="3" id="modifiedDate"></td>
+		</tr>
+
+		<tr>
+			<th>제목</th>
+			<td th:text="${post.title}"></td>
+
+			<th>조회수</th>
+			<td colspan="3" th:text="${post.viewCnt}"></td>
+		</tr>
+
+		<tr>
+			<th>아이디</th>
+			<td colspan="3" th:text="${post.writer}"></td>
+		</tr>
+
+		<tr>
+			<th>내용</th>
+			<td colspan="3" th:text="${post.content}"></td>
+		</tr>
+		</tbody>
+	</table>
+	<button type="button" th:text="수정" onclick="goWritePage();"></button>
+	<button type="button" onclick="goListPage();">뒤로</button>
+</th:block>
+
+<th:block layout:fragment="js">
+<script th:inline="javascript">
+/*<![CDATA[*/
+	window.onload = () => {
+		renderPostInfo();
+	}
+
+	// 게시글 렌더링
+	function renderPostInfo() {
+		const post = [[${post}]];
+		document.getElementById('createdDate').innerText = dayjs(post.createdDate).format('YYYY-MM-DD HH:mm');
+
+		console.log(post.modifiedDate);
+
+		if(post.modifiedDate != null) {
+			document.getElementById('modified').innerText = '수정일';
+			document.getElementById('modifiedDate').innerText = dayjs(post.modifiedDate).format('YYYY-MM-DD HH:mm');
+		}
+
+
+
+
+	}
+
+	// 수정 페이지
+	function goWritePage() {
+		var url = "/post/write?id=" + [[${post.id}]];
+		window.location.href = url;
+	}
+
+
+	// 뒤로 가기
+	function goListPage() {
+		window.history.back();
+	}
+/*]]>*/
+</script>
+</th:block>
