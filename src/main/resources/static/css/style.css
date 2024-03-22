@@ -21,6 +21,10 @@ header a {
     text-decoration: none;
 }
 
+a {
+    cursor: pointer;
+}
+
 .banner {
     height: 200px; /* 배너의 높이 설정 */
     background-color: #f0f0f0; /* 배너의 배경색 설정 */
@@ -68,6 +72,7 @@ main {
 }
 
 #list {
+    padding: 10 0px;
     text-align: center;
 }
 
@@ -80,7 +85,8 @@ main {
     margin-right: 20px;
 }
 
-.categoryName {
+.categoryName,
+.searchForm {
     background-color: white;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     padding: 10px;
@@ -114,4 +120,28 @@ footer {
 
 .selected {
     text-decoration: underline;
+    font-weight: bold;
+    color: blue;
+}
+
+#postList {
+    margin: 10 5px;
+    padding: 5px 10px;
+}
+
+#paging a {
+    text-decoration: none;
+    margin: 0 5px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    cursor: pointer;
+}
+#paging a:hover {
+    background-color: #f0f0f0;
+}
+
+.pageDisabled {
+    pointer-events: none;
+    cursor: default;
 }

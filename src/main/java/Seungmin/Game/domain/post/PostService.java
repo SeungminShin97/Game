@@ -6,6 +6,8 @@ import Seungmin.Game.domain.post.postDto.Post;
 import Seungmin.Game.domain.post.postDto.PostRequest;
 import Seungmin.Game.domain.post.postDto.PostResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +35,10 @@ public class PostService {
      * 게시글 리스트 반환
      * @return PostResponse List
      */
-    public List<PostResponse> showPostList() { return postRepository.findByDeleteYn(false).stream().map(Post::toDto).toList(); }
+    public Page<PostResponse> showPostList(Pageable pageable) {
+//        return postRepository.findByDeleteYn(false).stream().map(Post::toDto).toList();
+        return postRepository.findByDeleteYn(false, pageable).map(Post::toDto);
+    }
 
     /**
      * 게시글 저장
@@ -73,13 +78,15 @@ public class PostService {
      * @param categoryName 카테고리 이름
      * @return List<PostResponse>
      */
-    public List<PostResponse> findPostByCategoryId(final String categoryName) {
+    public Page<PostResponse> findPostByCategoryId(final String categoryName, final Pageable pageable) {
         if(!categoryName.equals("전체글")) {
             Long id = categoryRepository.findByCategory(categoryName).getId();
-            return postRepository.findByCategoryIdAndDeleteYn(id, false).stream().map(Post::toDto).collect(Collectors.toList());
+            return postRepository.findByCategoryIdAndDeleteYn(id, false, pageable).map(Post::toDto);
+//            return postRepository.findByCategoryIdAndDeleteYn(id, false).stream().map(Post::toDto).collect(Collectors.toList());
         }
         else
-            return postRepository.findAll().stream().map(Post::toDto).toList();
+            return postRepository.findByDeleteYn(false, pageable).map(Post::toDto);
+//            return postRepository.findAll().stream().map(Post::toDto).toList();
     }
 
     /**
