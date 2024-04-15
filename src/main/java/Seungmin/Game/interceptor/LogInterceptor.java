@@ -14,12 +14,14 @@ public class LogInterceptor implements HandlerInterceptor {
         log.debug("=========================================");
         log.debug("==================BEGIN==================");
         log.debug("Request URI -> {}", request.getRequestURI());
+        log.debug("Query Params -> {}", request.getQueryString());
 //        log.debug(String.valueOf(request.getParameterNames()));
         HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
     }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
         log.debug("===================END===================");
         log.debug("=========================================");
         log.debug("");

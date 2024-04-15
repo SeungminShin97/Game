@@ -132,7 +132,7 @@ footer {
 #paging a {
     text-decoration: none;
     margin: 0 5px;
-    padding: 5px 10px;
+    padding: 5px 7px;
     border: 1px solid #ccc;
     border-radius: 3px;
     cursor: pointer;
@@ -144,4 +144,10 @@ footer {
 .pageDisabled {
     pointer-events: none;
     cursor: default;
+}
+
+.overflow-ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

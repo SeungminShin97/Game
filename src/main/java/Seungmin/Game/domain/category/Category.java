@@ -1,14 +1,12 @@
 package Seungmin.Game.domain.category;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@ToString
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

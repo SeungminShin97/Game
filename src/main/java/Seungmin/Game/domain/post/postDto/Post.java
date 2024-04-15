@@ -15,7 +15,7 @@ public class Post extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     private Category category;
     @Column
@@ -25,11 +25,11 @@ public class Post extends BaseTimeEntity {
     @Column
     private String writer;
     @Column
-    private int viewCnt;
+    private int viewCnt = 0;
     @Column
     private boolean noticeYn;
     @Column
-    private boolean deleteYn;
+    private boolean deleteYn = false;
     @Column
     private boolean publicYn;
 
@@ -50,7 +50,8 @@ public class Post extends BaseTimeEntity {
     public PostResponse toDto() {
         return PostResponse.builder()
                 .id(id)
-                .category(category)
+                .category(category
+                )
                 .title(title)
                 .content(content)
                 .writer(writer)
