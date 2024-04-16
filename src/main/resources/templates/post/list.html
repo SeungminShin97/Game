@@ -70,8 +70,12 @@
 <th:block layout:fragment="js">
 <script th:inline="javascript">
 /*<![CDATA[*/
+    var pageState = {};
+
     window.onload = function() {
-        updatePostList(0);
+        const postList = [[${postList}]];
+        drawPostList(postList.content);
+        drawPaging(postList);
     }
 
     // 카테고리 클릭 이벤트 바인딩
@@ -162,6 +166,7 @@
 
     // 페이징 그리기
     function drawPaging(page) {
+        setPageState(page.totalPages, page.totalElements);
         let html = '';
 
         let offset = Math.floor(page.number / 10) * 10;
@@ -200,18 +205,23 @@
     // 페이지 계산
     function calculatePage(pageNumber) {
         if(pageNumber === 0) return parseInt(pageNumber, 10);
-        const postList = [[${postList}]];
         switch(pageNumber) {
             case null :                                                             // viewType 변경 시
                 const pageNum = getPageNum();
-                if(getViewType() * pageNum > postList.totalElements) return 0;      // viewType 변경할 때 현재 페이지를 유지하면 total 보다 클 경우 0페이지로 이동
+                if(getViewType() * pageNum > pageState.totalElements) return 0;      // viewType 변경할 때 현재 페이지를 유지하면 total 보다 클 경우 0페이지로 이동
                 else return pageNum;                                                // total 보다 작을 경우 현재 페이지 유지
             case 'first' : return 0;                                                // 처음 페이지
             case 'prev' : return getPageNum() - 1;                                  // 앞 페이지
             case 'next' : return getPageNum() + 1;                                  // 뒤 페이지
-            case 'last' : return postList.totalPages - 1;                           // 마지막 페이지
+            case 'last' : return pageState.totalPages - 1;                           // 마지막 페이지
             default : return parseInt(pageNumber, 10);                              // 직접 페이지 선택
         }
+    }
+
+    // 현재 페이지네이션 정보 저장
+    function setPageState(pages, elements) {
+        pageState.totalPages = pages;
+        pageState.totalElements = elements;
     }
 
 
