@@ -13,19 +13,22 @@
 
 <body>
 	<div class="login-container">
-		<form th:action="@{/login}" method="POST">
+		<form id="login" th:action="@{/member/login}" method="POST">
 			<div class="form-group">
-				<label for="userId">아이디:</label>
-				<input type="text" id="userId" name="userId" required>
+				<label for="loginId">아이디:</label>
+				<input type="text" id="loginId" name="loginId" required>
 			</div>
 			<div class="form-group">
 				<label for="password">비밀번호:</label>
 				<input type="password" id="password" name="password" required>
 			</div>
 			<div class="form-group actions">
-				<button type="submit">로그인</button>
+				<button>로그인</button>
 			</div>
 		</form>
+		<div th:if="${errorMessage}">
+			<p style="color: #008000" th:text="${errorMessage}"></p>
+		</div>
 		<div class="links">
 			<button onclick="openModal('idModal')">아이디 찾기</button>
 			<button onclick="openModal('passwordModal')">비밀번호 찾기</button>
@@ -37,14 +40,13 @@
 	<div id="idModal" class="modal">
 		<div class="modal-content">
 			<span class="close" onclick="closeModal('idModal')">&times;</span>
-<!--			<form th:action="/find-id" method="POST">-->
 			<form method="POST">
 				<div class="form-group">
 					<label for="idModalEmail">이메일:</label>
 					<input type="email" id="idModalEmail" name="idModalEmail" required>
 				</div>
 				<div class="form-group actions">
-					<button type="submit">아이디 찾기</button>
+					<button>아이디 찾기</button>
 				</div>
 			</form>
 		</div>
@@ -64,7 +66,7 @@
 					<input type="email" id="passwordModalEmail" name="passwordModalEmail" required>
 				</div>
 				<div class="form-group actions">
-					<button type="submit">비밀번호 재설정</button>
+					<button>비밀번호 재설정</button>
 				</div>
 			</form>
 		</div>
@@ -87,17 +89,25 @@
 				<div class="form-group">
 					<label for="signupModalPasswordConfirm">비밀번호 확인:</label>
 					<input type="password" id="signupModalPasswordConfirm" name="signupModalPasswordConfirm" required>
+					<span id="passwordMatchResult"></span>
 				</div>
 				<div class="form-group">
 					<label for="signupModalName">이름:</label>
 					<input type="text" id="signupModalName" name="signupModalName" required>
 				</div>
 				<div class="form-group">
+					<label for="signupModalGender">성별 :</label>
+					<select id="signupModalGender" name="signupModalGender">
+						<option value="male">남자</option>
+						<option value="female">여자</option>
+					</select>
+				</div>
+				<div class="form-group">
 					<label for="signupModalBirthday">생년월일:</label>
 					<input type="date" id="signupModalBirthday" name="signupModalBirthday" required>
 				</div>
 				<div class="form-group actions">
-					<button type="submit">회원가입</button>
+					<button type="button" onclick="signup();">회원가입</button>
 
 				</div>
 			</form>
@@ -108,13 +118,111 @@
 </body>
 <script th:inline="javascript">
 /*<![CDATA[*/
+
+	document.getElementById("signupModalPasswordConfirm").onkeyup = function() {
+	    var password = document.getElementById("signupModalPassword").value;
+	    var confirmPassword = document.getElementById("signupModalPasswordConfirm").value;
+
+	    if(password == confirmPassword) {
+	        document.getElementById("passwordMatchResult").style.color = 'green';
+	        document.getElementById("passwordMatchResult").innerHTML = "비밀번호 일치";
+	    } else {
+	        document.getElementById("passwordMatchResult").style.color = 'red';
+	        document.getElementById("passwordMatchResult").innerHTML = "비밀번호 불일치";
+	    }
+	};
+
+
+
+<!--	// 로그인-->
+<!--	function login() {-->
+<!--		const formData = {-->
+<!--			loginId: document.getElementById('loginId').value,-->
+<!--			password: document.getElementById('password').value-->
+<!--		}-->
+<!--		console.log(formData);-->
+<!--		$.ajax({-->
+<!--			type: "POST",-->
+<!--			url: `/member/login`,-->
+<!--			data: formData,-->
+<!--			async:false,-->
+<!--			success: function(response) {-->
+<!--				if(response.success) {-->
+<!--					alert("환영합니다. " + response.nickname + "님!");-->
+<!--					window.location.href = "/";-->
+<!--				}-->
+<!--				else-->
+<!--					alert(response.errorMessage);-->
+<!--			},-->
+<!--            error: function(xhr, status, error) {-->
+<!--                console.error('AJAX request failed error:', status, error);-->
+<!--            }-->
+<!--		});-->
+<!--	}-->
+
+
+	// 회원가입
+	function signup() {
+		const signupData = {
+		    loginId: document.getElementById('signupModalUserId').value,
+		    password: document.getElementById('signupModalPassword').value,
+		    name: document.getElementById('signupModalName').value,
+		    gender: document.getElementById('signupModalGender').value,
+		    birthday: document.getElementById('signupModalBirthday').value
+		}
+
+		$.ajax({
+			type: "POST",
+			url: `/member/signup`,
+			contentType: 'application/json',
+			data: JSON.stringify(signupData),
+			success : function(requestBoolean) {
+				if(requestBoolean) {
+					alert("회원가입 성공");
+					location.reload();
+				}
+				else {
+					alert("회원가입 실패, 다시 시도하십시오");
+				}
+			},
+			error: function(xhr, status, error) {
+                console.error('AJAX request failed error:', status, error);
+            }
+		});
+	}
+
+	// 아이디 중복확인
+	function checkUserId() {
+		const checkId = document.getElementById('signupModalUserId').value;
+		$.ajax({
+			type: "POST",
+			url: `/member/duplicateLoginId`,
+			data: checkId,
+			success : function(check) {
+				if(check) {
+					alert("사용가능한 아이디입니다.");
+					document.getElementById("signupModalUserId").disabled = true;
+                    document.querySelector("button[onclick='checkUserId()']").disabled = true;
+				}
+				else
+					alert("이미 사용중인 아이디입니다.");
+			},
+			error: function(xhr, status, error) {
+                console.error('AJAX request failed error:', status, error);
+            }
+		});
+	}
+
+
 	function openModal(modalId) {
 	    document.getElementById(modalId).style.display = 'block';
+	    console.log("open");
 	}
 
 	function closeModal(modalId) {
 	    document.getElementById(modalId).style.display = 'none';
 	}
+
 /*]]>*/
 </script>
 </html>

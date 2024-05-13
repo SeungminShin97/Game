@@ -7,7 +7,17 @@
     <header>
         <h1><a href="/">Game</a> </h1>
 
-        <a class="login-link" th:href="@{/member/login}">로그인</a>
+        <a class="login-link" th:unless="${loginUser != null}" th:href="@{/member}">로그인</a>
+        <div th:if="${loginUser != null}">
+            <a th:text="${loginUser}" th:href="@{/user}">${loginUser}님</a>
+            <div class="dropdown">
+                <div class="dropdown-toggle"></div>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" th:href="@{/user}">프로필</a>
+                    <a class="dropdown-item" th:href="@{/member/logout}">로그아웃</a>
+                </div>
+            </div>
+        </div>
     </header>
 
     <div class="banner">

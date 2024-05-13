@@ -151,3 +151,48 @@ footer {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+/* 드롭다운 스타일 */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+
+
+/* 삼각형 표시 (유니코드) */
+.dropdown-toggle::after {
+    content: "\25BC"; /* 아래향 삼각형 유니코드 */
+    font-size: 12px;
+    margin-left: 0.5rem;
+}
+
+/* 드롭다운 메뉴 스타일 */
+.dropdown-menu {
+    display: none;
+    right: 0;
+    position: absolute;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    z-index: 1000;
+    min-width: 10rem; /* 메뉴가 잘리지 않도록 넓이 조정 */
+}
+
+/* 드롭다운 메뉴 항목 스타일 */
+.dropdown-menu a {
+    display: block;
+    padding: 0.25rem 1rem;
+    text-decoration: none;
+    color: #212529;
+}
+
+.dropdown-menu a:hover {
+    background-color: #e9ecef;
+}
+
+/* 드롭다운 메뉴 표시 */
+.dropdown:hover .dropdown-menu {
+    display: block;
+}

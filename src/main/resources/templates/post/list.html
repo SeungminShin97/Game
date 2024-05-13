@@ -73,9 +73,7 @@
     var pageState = {};
 
     window.onload = function() {
-        const postList = [[${postList}]];
-        drawPostList(postList.content);
-        drawPaging(postList);
+        updatePostListByCategory();
     }
 
     // 카테고리 클릭 이벤트 바인딩
@@ -131,6 +129,7 @@
             url: `/post/list?${$.param(queryParam)}`,
             dataType: 'json',
             success : function (requestList) {
+<!--                console.log("/post/list ::: ",requestList);-->
                 drawPostList(requestList.content);
                 drawPaging(requestList);
             },
@@ -150,8 +149,11 @@
                 html += `
                     <tr>
                         <td><a onclick="goViewPage(${post.id})">${post.id}</a></td>
-                        <td><a class="overflow-ellipsis" onclick="goViewPage(${post.id})">${post.title}</a></td>
-                        <td class="overflow-ellipsis">${post.writer}</td>
+                        <td>
+                            <a class="overflow-ellipsis" onclick="goViewPage(${post.id})">${post.title}</a>
+                            ${!post.publicYn ? '<span>&#x1F512;</span>' : ''}
+                        </td>
+                        <td class="overflow-ellipsis">${post.member.nickname}</td>
                         <td>${dayjs(post.createdDate).format('YYYY-MM-DD')}</td>
                         <td>${post.viewCnt}</td>
                     </tr>

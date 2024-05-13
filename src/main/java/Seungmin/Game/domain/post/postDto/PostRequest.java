@@ -1,6 +1,7 @@
 package Seungmin.Game.domain.post.postDto;
 
 import Seungmin.Game.domain.category.Category;
+import Seungmin.Game.domain.member.memberDto.Member;
 import lombok.*;
 
 @Getter
@@ -14,7 +15,7 @@ public class PostRequest {
     private String category;
     private String title;
     private String content;
-    private String writer;
+    private Member member;
     private int viewCnt;
     private boolean publicYn;
     private boolean noticeYn;
@@ -24,7 +25,7 @@ public class PostRequest {
                 .category(category)
                 .title(title)
                 .content(content)
-                .writer(writer)
+                .member(member)
                 .viewCnt(viewCnt)
                 .noticeYn(noticeYn)
                 .publicYn(publicYn)

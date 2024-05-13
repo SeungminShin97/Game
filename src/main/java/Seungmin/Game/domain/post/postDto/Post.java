@@ -2,6 +2,7 @@ package Seungmin.Game.domain.post.postDto;
 
 import Seungmin.Game.common.BaseTimeEntity;
 import Seungmin.Game.domain.category.Category;
+import Seungmin.Game.domain.member.memberDto.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,8 +23,9 @@ public class Post extends BaseTimeEntity {
     private String title;
     @Column
     private String content;
-    @Column
-    private String writer;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "member_id")
+    private Member member;
     @Column
     private int viewCnt = 0;
     @Column
@@ -35,12 +37,12 @@ public class Post extends BaseTimeEntity {
 
 
     @Builder
-    public Post(Category category, String title, String content, String writer, int viewCnt, boolean noticeYn, boolean deleteYn,
+    public Post(Category category, String title, String content, Member member, int viewCnt, boolean noticeYn, boolean deleteYn,
                 boolean publicYn) {
         this.category = category;
         this.title = title;
         this.content = content;
-        this.writer = writer;
+        this.member = member;
         this.viewCnt = viewCnt;
         this.noticeYn = noticeYn;
         this.deleteYn = deleteYn;
@@ -54,7 +56,7 @@ public class Post extends BaseTimeEntity {
                 )
                 .title(title)
                 .content(content)
-                .writer(writer)
+                .member(member)
                 .viewCnt(viewCnt)
                 .noticeYn(noticeYn)
                 .createdDate(createdDate)
@@ -67,7 +69,7 @@ public class Post extends BaseTimeEntity {
         this.category = category;
         this.title = postRequest.getTitle();
         this.content = postRequest.getContent();
-        this.writer = postRequest.getWriter();
+        this.member = postRequest.getMember();
         this.noticeYn = postRequest.isNoticeYn();
         this.publicYn = postRequest.isPublicYn();
     }

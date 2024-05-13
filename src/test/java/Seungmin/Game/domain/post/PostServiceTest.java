@@ -1,7 +1,9 @@
 package Seungmin.Game.domain.post;
 
+import Seungmin.Game.common.enums.Gender;
 import Seungmin.Game.domain.category.Category;
 import Seungmin.Game.domain.category.CategoryRepository;
+import Seungmin.Game.domain.member.memberDto.Member;
 import Seungmin.Game.domain.post.postDto.Post;
 import Seungmin.Game.domain.post.postDto.PostRequest;
 import org.assertj.core.api.Assertions;
@@ -12,7 +14,9 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,13 +29,23 @@ class PostServiceTest {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    private PasswordEncoder passwordEncoder;
+
     private Category category;
     private Post post;
 
     @BeforeEach
     void setUp() {
         category = Category.builder().category("testtest").build();
-        post = Post.builder().title("testTitle").writer("testWriter").content("가나다라마바사").publicYn(false).category(category).noticeYn(false).build();
+        Member member = Member.builder()
+                .loginId("testWriter")
+                .name("Member")
+                .nickname("admin")
+                .password(passwordEncoder.encode("1234"))
+                .birthday(LocalDate.now())
+                .gender(Gender.male)
+                .build();
+        post = Post.builder().title("testTitle").member(member).content("가나다라마바사").publicYn(false).category(category).noticeYn(false).build();
     }
 
     @Test
@@ -49,7 +63,7 @@ class PostServiceTest {
         Assertions.assertThat(testPost).isNotNull();
         Assertions.assertThat(testPost.getId()).isNotNull();
         Assertions.assertThat(testPost.getTitle()).isEqualTo("testTitle");
-        Assertions.assertThat(testPost.getWriter()).isEqualTo("testWriter");
+        Assertions.assertThat(testPost.getMember().getNickname()).isEqualTo("testWriter");
         Assertions.assertThat(testPost.getContent()).isEqualTo("가나다라마바사");
         Assertions.assertThat(testPost.isPublicYn()).isEqualTo(false);
         Assertions.assertThat(testPost.isNoticeYn()).isEqualTo(false);
@@ -112,7 +126,7 @@ class PostServiceTest {
         //given
         String updateContent = "updated content";
         PostRequest postRequest = PostRequest.builder().id(post.getId()).category(category.getCategory()).viewCnt(0).title(post.getTitle()).content(updateContent)
-                .noticeYn(post.isNoticeYn()).publicYn(post.isPublicYn()).writer(post.getWriter()).build();
+                .noticeYn(post.isNoticeYn()).publicYn(post.isPublicYn()).member(post.getMember()).build();
 
         //when
         post.updatePost(postRequest, category);

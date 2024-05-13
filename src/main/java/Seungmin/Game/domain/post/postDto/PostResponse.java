@@ -1,8 +1,11 @@
 package Seungmin.Game.domain.post.postDto;
 
 import Seungmin.Game.domain.category.Category;
-import lombok.*;
-import org.hibernate.sql.Update;
+import Seungmin.Game.domain.member.memberDto.Member;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -14,7 +17,7 @@ public class PostResponse {
     private Category category;
     private String title;
     private String content;
-    private String writer;
+    private Member member;
     private int viewCnt;
     private boolean noticeYn;
     private boolean publicYn;
@@ -23,13 +26,13 @@ public class PostResponse {
 
 
     @Builder
-    public PostResponse(Long id, Category category, String title, String content, String writer,
+    public PostResponse(Long id, Category category, String title, String content, Member member,
                         int viewCnt, boolean noticeYn, LocalDateTime createdDate, LocalDateTime modifiedDate, boolean publicYn) {
         this.id = id;
         this.category = category;
         this.title = title;
         this.content = content;
-        this.writer = writer;
+        this.member = member;
         this.viewCnt = viewCnt;
         this.noticeYn = noticeYn;
         this.publicYn = publicYn;

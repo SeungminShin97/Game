@@ -1,4 +1,4 @@
-package Seungmin.Game.common;
+package Seungmin.Game.common.enums;
 
 public enum SearchType {
     title,

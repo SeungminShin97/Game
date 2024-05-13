@@ -14,36 +14,41 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findByDeleteYn(boolean deleteYn, Pageable pageable);
     Optional<Post> findByIdAndDeleteYn(Long categoryId, boolean deleteYn);
 
-    @Query("SELECT p FROM Post p JOIN FETCH p.category WHERE " +
-            "p.deleteYn = false " +
+    @Query("SELECT p FROM Post p " +
+            "JOIN FETCH p.category c " +
+            "JOIN FETCH p.member m " +
+            "WHERE p.deleteYn = false " +
             "AND (:categoryType IS NULL OR p.category.category = :categoryType) " +
             "AND (:keyword IS NULL" +
             "   OR p.title LIKE CONCAT('%', :keyword, '%') " +
             "   OR p.content LIKE CONCAT('%', :keyword, '%') " +
-            "   OR p.writer LIKE CONCAT('%', :keyword, '%'))")
+            "   OR m.nickname LIKE CONCAT('%', :keyword, '%'))")
     Page<Post> searchAll(@Param("categoryType")String categoryType,
                                   @Param("keyword")String keyword,
                                   Pageable pageable);
-    @Query("SELECT p FROM Post p JOIN FETCH p.category WHERE " +
-            "p.deleteYn = false " +
+    @Query("SELECT p FROM Post p JOIN FETCH p.category " +
+            "JOIN FETCH p.member " +
+            "WHERE p.deleteYn = false " +
             "AND (:categoryType IS NULL OR p.category.category = :categoryType) " +
             "AND (:keyword IS NULL OR p.content LIKE CONCAT('%', :keyword, '%'))")
     Page<Post> searchContent(@Param("categoryType")String categoryType,
                              @Param("keyword")String keyword,
                              Pageable pageable);
 
-    @Query("SELECT p FROM Post p JOIN FETCH p.category WHERE " +
-            "p.deleteYn = false " +
+    @Query("SELECT p FROM Post p JOIN FETCH p.category " +
+            "JOIN FETCH p.member " +
+            "WHERE p.deleteYn = false " +
             "AND (:categoryType IS NULL OR p.category.category = :categoryType) " +
             "AND (:keyword IS NULL OR p.title LIKE CONCAT('%', :keyword, '%'))")
     Page<Post> searchTitle(@Param("categoryType")String categoryType,
                            @Param("keyword")String keyword,
                            Pageable pageable);
 
-    @Query("SELECT p FROM Post p LEFT JOIN p.category WHERE " +
-            "p.deleteYn = false " +
+    @Query("SELECT p FROM Post p LEFT JOIN p.category " +
+            "JOIN FETCH p.member m " +
+            "WHERE p.deleteYn = false " +
             "AND (:categoryType IS NULL OR p.category.category = :categoryType) " +
-            "AND (:keyword IS NULL OR p.writer LIKE CONCAT('%', :keyword, '%'))")
+            "AND (:keyword IS NULL OR m.nickname LIKE CONCAT('%', :keyword, '%'))")
     Page<Post> searchWriter(@Param("categoryType")String categoryType,
                            @Param("keyword")String keyword,
                            Pageable pageable);

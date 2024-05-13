@@ -3,6 +3,7 @@ package Seungmin.Game.domain.post;
 import Seungmin.Game.common.dto.MessageDto;
 import Seungmin.Game.common.dto.SearchDto;
 import Seungmin.Game.domain.category.CategoryService;
+import Seungmin.Game.domain.member.MemberRepository;
 import Seungmin.Game.domain.post.postDto.PostRequest;
 import Seungmin.Game.domain.post.postDto.PostResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,12 +16,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @Controller
 @RequiredArgsConstructor
 public class PostController {
 
     private final PostService postService;
     private final CategoryService categoryService;
+    private final MemberRepository memberRepository;
     private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
     // 메세지 전달 후 리다이렉트
@@ -37,32 +41,41 @@ public class PostController {
     // 홈 화면
     // 게시글 리스트 페이지
     @GetMapping("/")
-    public String home(@PageableDefault(sort = "id", size = 20) Pageable pageable, Model model) {
+    @PostMapping("/")
+    public String home(@PageableDefault(sort = "id", size = 20) Pageable pageable, Principal principal, Model model) {
         renderCategoryListForAsideBar(model);
-        Page<PostResponse> postList = postService.showPostList(pageable);
-        model.addAttribute("postList", postList);
+
+        if(principal != null)
+            model.addAttribute("loginUser", principal.getName());
         return "post/list";
     }
+
 
     // 게시글 카테고리 변경
     @GetMapping("/post/list")
     @ResponseBody
     public Page<PostResponse> changePostList(@ModelAttribute final SearchDto searchDto, @PageableDefault(sort = "id", size = 20) Pageable pageable) {
-        return postService.findPostBySearchType(searchDto, pageable);
+        Page<PostResponse> asdf = postService.findPostBySearchType(searchDto, pageable);
+        return asdf;
     }
 
 
     // 게시글 작성 페이지
     @GetMapping("/post/write")
-    public String openPostWrite(@RequestParam(value = "id", required = false) final Long id, Model model) {
-        renderCategoryListForAsideBar(model);
-        if(id != null) {
-            PostResponse post = postService.findPostById(id);
-            if(post != null) {
+    public String openPostWrite(@RequestParam(value = "id", required = false) final Long id, Model model, Principal principal) {
+        if(id != null) {    // 게시글 수정
+            try{
+                if(!postService.compareLoginIdAndPostWriter(principal, id)) // 로그인 유저와 게시글 작성자 비교
+                    return showMessageAndRedirect(new MessageDto("게시글 수정은 작성자만 가능합니다.", "/post/view/" + id, RequestMethod.GET, null), model);
+                renderCategoryListForAsideBar(model);
+                PostResponse post = postService.findPostById(id);
                 model.addAttribute("post", post);
-            }
-            else {
-                MessageDto messageDto = new MessageDto("존재하지 않는 게시글입니다.", "/", RequestMethod.GET, null);
+            } catch (Exception e) {
+                MessageDto messageDto = MessageDto.builder()
+                        .message(e.getMessage())
+                        .redirectUri("/")
+                        .method(RequestMethod.GET)
+                        .data(null).build();
                 return showMessageAndRedirect(messageDto, model);
             }
         }
@@ -79,10 +92,14 @@ public class PostController {
 
     // 게시글 상세 페이지
     @GetMapping("/post/view/{postId}")
-    public String viewPost(@PathVariable Long postId, Model model) {
-        renderCategoryListForAsideBar(model);
+    public String viewPost(@PathVariable Long postId, Model model, Principal principal) {
+        final PostResponse postResponse = postService.findPostById(postId);
+        if(postResponse != null) {
 
-        if(postService.findPostById(postId) != null) {
+            if(!postResponse.isPublicYn() && principal == null) // 비공개 게시글 처리
+                return showMessageAndRedirect(new MessageDto("비공개 게시글입니다. 로그인 후 이용해 주세요", "/", RequestMethod.GET, null), model);
+
+            renderCategoryListForAsideBar(model);
             postService.updateViewCnt(postId);
             PostResponse post = postService.findPostById(postId);
             model.addAttribute("post", post);

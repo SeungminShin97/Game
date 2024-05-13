@@ -27,7 +27,12 @@
 
                     <tr>
                         <th>게시판</th>
-                        <td colspan="3"><input type="text" id="category" name="category" placeholder="게시판"/> </td>
+                        <td colspan="3">
+                            <select id="category" name="category">
+
+                            </select>
+<!--                            <input type="text" id="category" name="category" placeholder="게시판"/> -->
+                        </td>
                     </tr>
 
                     <tr>
@@ -75,11 +80,21 @@
 
         document.getElementById('saveBtn').innerText = '수정';
         const form = document.getElementById('saveForm');
-        const fields = ['title', 'content', 'writer', 'publicYn'];
+        const fields = ['title', 'content', 'publicYn'];
         form.publicYn.checked = post.publicYn;
 
-        document.getElementById('category').value = post.category.category;
+        const html = '';
+        html += `<option value="${post.category.category}>${post.category.category}</option>`;
+        categoryList.forEach(t => {
+            if(t !== post.category.category){
+                html += `<option value="${t}">${t}</option>`;
+            }
+        });
+        document.getElementById('category').innerHTML = html;
+<!--        document.getElementById('category').value = post.category.category;-->
+
         document.getElementById('createdDate').textContent = dayjs(post['createdDate']).format('YYYY-MM-DD  HH:mm');
+        document.getElementById('writer').value = post.member.nickname;
 
         fields.forEach(field => {
             form[field].value = post[field];

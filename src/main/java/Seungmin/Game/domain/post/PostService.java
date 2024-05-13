@@ -1,18 +1,22 @@
 package Seungmin.Game.domain.post;
 
 import Seungmin.Game.common.dto.SearchDto;
+import Seungmin.Game.common.exceptions.CustomException;
+import Seungmin.Game.common.exceptions.CustomExceptionCode;
 import Seungmin.Game.domain.category.Category;
 import Seungmin.Game.domain.category.CategoryService;
+import Seungmin.Game.domain.member.MemberRepository;
 import Seungmin.Game.domain.post.postDto.Post;
 import Seungmin.Game.domain.post.postDto.PostRequest;
 import Seungmin.Game.domain.post.postDto.PostResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.security.Principal;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +24,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final CategoryService categoryService;
+    private final MemberRepository memberRepository;
 
 
     /**
@@ -48,8 +53,9 @@ public class PostService {
      * @return PostResponse
      */
     public PostResponse findPostById(final Long id) {
-        Optional<Post> post = postRepository.findByIdAndDeleteYn(id, false);
-        return post.map(Post::toDto) .orElse(null);
+        // todo 예외처리 마무리~
+        Post post = postRepository.findByIdAndDeleteYn(id, false).orElseThrow(() -> new CustomException(CustomExceptionCode.PostNotFoundException));
+        return post.toDto();
     }
 
 
@@ -88,6 +94,21 @@ public class PostService {
     @Transactional
     public void updateViewCnt(final Long postId) {
         postRepository.findById(postId).ifPresent(Post::updateViewCnt);
+    }
+
+
+    /**
+     * 로그인 유저와 게시글 작성자 비교
+     * @param principal
+     * @param postId
+     * @return
+     */
+    public boolean compareLoginIdAndPostWriter(Principal principal, long postId) {
+        final String loginId = principal.getName();
+        final long memberId = memberRepository.findByLoginId(loginId).orElseThrow(() -> new UsernameNotFoundException("유저 검색 실패")).getId();
+
+        final long postWriterId = findPostById(postId).getMember().getId();
+        return memberId == postWriterId;
     }
 
     private Page<PostResponse> searchByTitle(final SearchDto searchDto, final Pageable pageable) {
