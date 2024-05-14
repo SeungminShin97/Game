@@ -55,8 +55,7 @@ public class PostController {
     @GetMapping("/post/list")
     @ResponseBody
     public Page<PostResponse> changePostList(@ModelAttribute final SearchDto searchDto, @PageableDefault(sort = "id", size = 20) Pageable pageable) {
-        Page<PostResponse> asdf = postService.findPostBySearchType(searchDto, pageable);
-        return asdf;
+        return postService.findPostBySearchType(searchDto, pageable);
     }
 
 
@@ -93,20 +92,19 @@ public class PostController {
     // 게시글 상세 페이지
     @GetMapping("/post/view/{postId}")
     public String viewPost(@PathVariable Long postId, Model model, Principal principal) {
-        final PostResponse postResponse = postService.findPostById(postId);
-        if(postResponse != null) {
-
-            if(!postResponse.isPublicYn() && principal == null) // 비공개 게시글 처리
+        try {
+            final PostResponse postResponse = postService.findPostById(postId);
+            if(!postResponse.isPublicYn() && principal == null)
                 return showMessageAndRedirect(new MessageDto("비공개 게시글입니다. 로그인 후 이용해 주세요", "/", RequestMethod.GET, null), model);
-
             renderCategoryListForAsideBar(model);
             postService.updateViewCnt(postId);
             PostResponse post = postService.findPostById(postId);
             model.addAttribute("post", post);
             return "post/view";
+        } catch (Exception e) {
+            MessageDto messageDto = new MessageDto(e.getMessage(), "/", RequestMethod.GET, null);
+            return showMessageAndRedirect(messageDto, model);
         }
-        else
-            return showMessageAndRedirect(new MessageDto("존재하지 않는 게시글입니다.", "/", RequestMethod.GET, null), model);
     }
 
     // 게시글 수정 페이지

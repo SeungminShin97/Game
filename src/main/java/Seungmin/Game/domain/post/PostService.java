@@ -53,7 +53,6 @@ public class PostService {
      * @return PostResponse
      */
     public PostResponse findPostById(final Long id) {
-        // todo 예외처리 마무리~
         Post post = postRepository.findByIdAndDeleteYn(id, false).orElseThrow(() -> new CustomException(CustomExceptionCode.PostNotFoundException));
         return post.toDto();
     }
