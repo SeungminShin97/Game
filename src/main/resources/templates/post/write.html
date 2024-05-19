@@ -22,8 +22,8 @@
                     <tr>
                         <th scope="row">비공개</th>
                         <td>
-                            <input type="checkbox" id="publicYn" name="publicYn" th:value="true"/>설정
-                            <input type="hidden" name="publicYn" th:value="false"/>
+                            <input type="checkbox" id="publicYn" name="publicYn" th:value="false"/>설정
+                            <input type="hidden" name="publicYn" th:value="true"/>
                         </td>
 
 
@@ -60,6 +60,7 @@
         </form>
         <p>
             <button type="button" id="saveBtn" onclick="savePost();"></button>
+            <button type="button" onclick="deletePost();">삭제</button>
             <button type="button" onclick="goHomePage();">뒤로</button>
         </p>
     </section>
@@ -115,7 +116,6 @@
     // 게시글 저장
     function savePost() {
         const form = document.getElementById('saveForm');
-        form.publicYn.value = form.publicYn.checked;
         document.getElementById('saveBtn').disabled = true;
 
         if([[${post}]] != null)
@@ -123,6 +123,13 @@
         else
             form.action = '/post/save';
         form.submit();
+    }
+
+
+    // 게시글 삭제
+    function deletePost() {
+        if(confirm("정말 삭제하시겠습니까?"))
+            window.location.href = "/post/delete/" + post.id;
     }
 
 

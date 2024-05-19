@@ -106,6 +106,20 @@ public class PostService {
     }
 
     /**
+     * 게시글 삭제
+     * @param postId
+     */
+    @Transactional
+    public void deletePost(final long postId) {
+        try {
+            Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(CustomExceptionCode.PostNotFoundException));
+            post.deletePost();
+        } catch (Exception e) {
+            throw new CustomException(CustomExceptionCode.DeletePostFailedException);
+        }
+    }
+
+    /**
      * 게시글 조회수 증가
      */
     @Transactional

@@ -74,6 +74,10 @@ public class Post extends BaseTimeEntity {
         this.publicYn = postRequest.isPublicYn();
     }
 
+    public void deletePost() {
+        this.deleteYn = true;
+    }
+
     public void updateViewCnt() {
         viewCnt++;
     }

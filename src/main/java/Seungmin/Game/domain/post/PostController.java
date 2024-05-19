@@ -142,6 +142,23 @@ public class PostController {
         }
     }
 
+    // 게시글 삭제
+    @GetMapping("/post/delete/{postId}")
+    public String deletePost(@PathVariable Long postId, Model model) {
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if(postService.compareLoginIdAndPostWriter(authentication, postId)) {
+                postService.deletePost(postId);
+                return showMessageAndRedirect(new MessageDto("게시글 삭제가 완료되었습니다.", "/", RequestMethod.GET, null), model);
+            } else {
+                return showMessageAndRedirect(new MessageDto("게시글 작성자만 삭제할 수 있습니다.", "/post/view/" + postId, RequestMethod.GET, null), model);
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return showMessageAndRedirect(new MessageDto("알수 없는 오류가 발생했습니다. 다시 시도해 주세요", "/", RequestMethod.GET, null), model);
+        }
+    }
+
 }
 
 
