@@ -6,17 +6,18 @@ import Seungmin.Game.common.exceptions.CustomExceptionCode;
 import Seungmin.Game.domain.category.Category;
 import Seungmin.Game.domain.category.CategoryService;
 import Seungmin.Game.domain.member.MemberRepository;
+import Seungmin.Game.domain.member.MemberService;
+import Seungmin.Game.domain.member.memberDto.Member;
 import Seungmin.Game.domain.post.postDto.Post;
 import Seungmin.Game.domain.post.postDto.PostRequest;
 import Seungmin.Game.domain.post.postDto.PostResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.security.Principal;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +25,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final CategoryService categoryService;
+    private final MemberService memberService;
     private final MemberRepository memberRepository;
 
 
@@ -41,10 +43,18 @@ public class PostService {
      * @param params 게시글 정보
      */
     @Transactional
-    public void savePost(final PostRequest params) {
-        Category category = categoryService.showCategoryByCategory(params.getCategory());
-        Post post = params.toEntity(category);
-        postRepository.save(post);
+    public void savePost(final PostRequest params, final Authentication authentication) {
+        try {
+            Category category = categoryService.showCategoryByCategory(params.getCategory());
+            Member member = memberService.getMemberByAuthentication(authentication);
+            params.setMember(member);
+            Post post = params.toEntity(category);
+            postRepository.save(post);
+        } catch (CustomException e) {   // 사용자 검색 실패
+            throw e;
+        } catch (Exception e) {
+            throw new CustomException(CustomExceptionCode.SavePostFailedException);
+        }
     }
 
     /**
@@ -79,12 +89,20 @@ public class PostService {
      * 게시글 수정
      */
     @Transactional
-    public void updatePost(final PostRequest postRequest) {
-        Post post = postRepository.findById(postRequest.getId()).orElse(null);
-        Category category = categoryService.showCategoryByCategory(postRequest.getCategory());
+    public void updatePost(final PostRequest postRequest, final Authentication authentication) {
+        try {
+            postRequest.setMember(memberService.getMemberByAuthentication(authentication));
+            Post post = postRepository.findById(postRequest.getId()).orElse(null);
+            Category category = categoryService.showCategoryByCategory(postRequest.getCategory());
 
-        if(post != null && category != null)
-            post.updatePost(postRequest, category);
+            if(post != null && category != null)
+                post.updatePost(postRequest, category);
+
+        } catch (CustomException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new CustomException(CustomExceptionCode.UpdatePostFailedException);
+        }
     }
 
     /**
@@ -98,16 +116,20 @@ public class PostService {
 
     /**
      * 로그인 유저와 게시글 작성자 비교
-     * @param principal
+     * @param authentication
      * @param postId
      * @return
      */
-    public boolean compareLoginIdAndPostWriter(Principal principal, long postId) {
-        final String loginId = principal.getName();
-        final long memberId = memberRepository.findByLoginId(loginId).orElseThrow(() -> new UsernameNotFoundException("유저 검색 실패")).getId();
+    public boolean compareLoginIdAndPostWriter(Authentication authentication, long postId) {
+        try {
+            final String loginId = memberService.getMemberByAuthentication(authentication).getLoginId();
+            final long memberId = memberRepository.findByLoginId(loginId).orElseThrow(() -> new UsernameNotFoundException("유저 검색 실패")).getId();
 
-        final long postWriterId = findPostById(postId).getMember().getId();
-        return memberId == postWriterId;
+            final long postWriterId = findPostById(postId).getMember().getId();
+            return memberId == postWriterId;
+        } catch (CustomException e) {
+            throw e;
+        }
     }
 
     private Page<PostResponse> searchByTitle(final SearchDto searchDto, final Pageable pageable) {

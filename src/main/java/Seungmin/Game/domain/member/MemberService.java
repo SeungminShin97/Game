@@ -3,6 +3,8 @@ package Seungmin.Game.domain.member;
 import Seungmin.Game.domain.member.memberDto.Member;
 import Seungmin.Game.domain.member.memberDto.MemberRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -49,5 +51,19 @@ public class MemberService implements UserDetailsService {
     }
 
 
+    public Member getMemberByAuthentication(Authentication authentication) {
+        if (confirmAuthenticationIsAnonymous(authentication)) {
+            String loginId = authentication.getName();
+            return memberRepository.findByLoginId(loginId)
+                    .orElseThrow(() -> new UsernameNotFoundException("유저 검색 실패"));
+        }
+        throw new UsernameNotFoundException("비로그인 유저");
+    }
 
+    public boolean confirmAuthenticationIsAnonymous(Authentication authentication) {
+        if(!authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken)
+            throw new UsernameNotFoundException("비로그인 유저");
+        else
+            return true;
+    }
 }

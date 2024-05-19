@@ -10,7 +10,9 @@
         <form id="saveForm" method="#" th:method="POST">
             <input type="hidden" name="_method" th:if="${post != null}" value="put"/>
             <input type="hidden" id="id" name="id" th:if="${post != null}" th:value="${post.id}"/>
-            <input type="hidden" id="viewCnt" name="viewCnt" th:if="${post != null}" th:value="${post.viewCnt}"/>
+            <input type="hidden" name="viewCnt" th:if="${post != null}" th:value="${post.viewCnt}"/>
+            <input type="hidden" name="viewCnt" th:if="${post == null}" th:value="0"/>
+            <input type="hidden" name="noticeYn" th:value="false"/>
 
             <table>
                 <colgroup>
@@ -19,7 +21,11 @@
                 <tbody>
                     <tr>
                         <th scope="row">비공개</th>
-                        <td><input type="checkbox" id="publicYn" name="publicYn"/>설정</td>
+                        <td>
+                            <input type="checkbox" id="publicYn" name="publicYn" th:value="true"/>설정
+                            <input type="hidden" name="publicYn" th:value="false"/>
+                        </td>
+
 
                         <th scope="row">등록일</th>
                         <td colspan="3"><span id="createdDate" readonly></span></td>
@@ -29,9 +35,9 @@
                         <th>게시판</th>
                         <td colspan="3">
                             <select id="category" name="category">
-
+                                <option id="categoryDefault" value="" disabled selected>게시글 선택</option>
+                                <option th:each="list : ${categoryList}" th:value="${list.category}" th:text="${list.category}"></option>
                             </select>
-<!--                            <input type="text" id="category" name="category" placeholder="게시판"/> -->
                         </td>
                     </tr>
 
@@ -42,7 +48,7 @@
 
                     <tr>
                         <th>아이디</th>
-                        <td colspan="3"><input type="text" id="writer" name="writer"/></td>
+                        <td colspan="3"><span id="writer" readonly></span></td>
                     </tr>
 
                     <tr>
@@ -71,6 +77,9 @@
     // 게시글 정보 렌더링
     function renderPostInfo() {
         const post =  [[${post}]];
+        const categoryList = [[${categoryList}]];
+        const writer = [[${writer}]];
+        document.getElementById('writer').textContent = writer;
 
         if(!post) {
             initCreatedDate();
@@ -78,23 +87,16 @@
             return false;
         }
 
+        document.getElementById('categoryDefault').value = post.category.category;
+        document.getElementById('categoryDefault').textContent = post.category.category;
+
         document.getElementById('saveBtn').innerText = '수정';
         const form = document.getElementById('saveForm');
         const fields = ['title', 'content', 'publicYn'];
         form.publicYn.checked = post.publicYn;
 
-        const html = '';
-        html += `<option value="${post.category.category}>${post.category.category}</option>`;
-        categoryList.forEach(t => {
-            if(t !== post.category.category){
-                html += `<option value="${t}">${t}</option>`;
-            }
-        });
-        document.getElementById('category').innerHTML = html;
-<!--        document.getElementById('category').value = post.category.category;-->
 
         document.getElementById('createdDate').textContent = dayjs(post['createdDate']).format('YYYY-MM-DD  HH:mm');
-        document.getElementById('writer').value = post.member.nickname;
 
         fields.forEach(field => {
             form[field].value = post[field];

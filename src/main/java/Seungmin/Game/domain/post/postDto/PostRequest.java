@@ -31,6 +31,4 @@ public class PostRequest {
                 .publicYn(publicYn)
                 .build();
     }
-
-
 }

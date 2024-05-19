@@ -27,18 +27,11 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     .redirectUri("/")
                     .data(null).build();
 
-//            response.setContentType("application/json");
-//            response.setCharacterEncoding("UTF-8");
-//            response.getWriter().print(mapper.writeValueAsString(messageDto));
-//            response.getWriter().flush();
             HttpSession session = request.getSession();
             session.setAttribute("params", messageDto);
             response.sendRedirect("/common/messageRedirect");
 
             return false;
         }
-
-
-//        return HandlerInterceptor.super.preHandle(request, response, handler);
     }
 }

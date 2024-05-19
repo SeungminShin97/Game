@@ -2,6 +2,7 @@ package Seungmin.Game.config;
 
 import Seungmin.Game.interceptor.AuthenticationInterceptor;
 import Seungmin.Game.interceptor.LogInterceptor;
+import Seungmin.Game.interceptor.UserInfoInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebMvcConfig implements WebMvcConfigurer {
 
     private final AuthenticationInterceptor authenticationInterceptor;
+    private final UserInfoInterceptor userInfoInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -25,5 +27,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(authenticationInterceptor)
                 .addPathPatterns("/post/**")
                 .excludePathPatterns("/post/list", "/post/view/**");
+
+        // 로그인 유저 정보 전달
+        registry.addInterceptor(userInfoInterceptor)
+                .addPathPatterns("/**");
     }
 }

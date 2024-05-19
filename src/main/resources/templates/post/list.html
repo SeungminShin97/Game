@@ -129,7 +129,6 @@
             url: `/post/list?${$.param(queryParam)}`,
             dataType: 'json',
             success : function (requestList) {
-<!--                console.log("/post/list ::: ",requestList);-->
                 drawPostList(requestList.content);
                 drawPaging(requestList);
             },
