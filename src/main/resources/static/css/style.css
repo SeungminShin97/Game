@@ -1,3 +1,4 @@
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -26,14 +27,14 @@ a {
 }
 
 .banner {
-    height: 200px; /* 배너의 높이 설정 */
-    background-color: #f0f0f0; /* 배너의 배경색 설정 */
-    text-align: center; /* 텍스트 가운데 정렬 */
+    height: 200px;
+    background-color: #f0f0f0;
+    text-align: center;
 }
 
 .banner img {
-    max-width: 100%; /* 이미지가 부모 요소를 넘어가지 않도록 설정 */
-    max-height: 100%; /* 이미지가 부모 요소를 넘어가지 않도록 설정 */
+    max-width: 100%;
+    max-height: 100%;
 }
 
 .navigator {
@@ -60,9 +61,8 @@ a {
 
 .login-link {
     text-decoration: none;
-    color: #999; /* 링크 색상 지정 */
+    color: #999;
 }
-
 
 main {
     height: 100%;
@@ -137,6 +137,7 @@ footer {
     border-radius: 3px;
     cursor: pointer;
 }
+
 #paging a:hover {
     background-color: #f0f0f0;
 }
@@ -152,22 +153,17 @@ footer {
     text-overflow: ellipsis;
 }
 
-/* 드롭다운 스타일 */
 .dropdown {
     position: relative;
     display: inline-block;
 }
 
-
-
-/* 삼각형 표시 (유니코드) */
 .dropdown-toggle::after {
-    content: "\25BC"; /* 아래향 삼각형 유니코드 */
+    content: "\25BC";
     font-size: 12px;
     margin-left: 0.5rem;
 }
 
-/* 드롭다운 메뉴 스타일 */
 .dropdown-menu {
     display: none;
     right: 0;
@@ -177,10 +173,9 @@ footer {
     padding: 0.5rem;
     border-radius: 0.25rem;
     z-index: 1000;
-    min-width: 10rem; /* 메뉴가 잘리지 않도록 넓이 조정 */
+    min-width: 10rem;
 }
 
-/* 드롭다운 메뉴 항목 스타일 */
 .dropdown-menu a {
     display: block;
     padding: 0.25rem 1rem;
@@ -192,7 +187,65 @@ footer {
     background-color: #e9ecef;
 }
 
-/* 드롭다운 메뉴 표시 */
 .dropdown:hover .dropdown-menu {
     display: block;
 }
+
+.post-section {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-right: 20px;
+    margin-bottom: 30px;
+}
+
+.post-buttons {
+    margin-top: 20px;
+}
+
+.comment-section {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-right: 20px;
+    margin-top: 40px;
+}
+
+.comment-form {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.comment-form textarea {
+    margin-right: 10px;
+    flex-grow: 1;
+}
+
+.comment_box {
+    background-color: #f0f0f0;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.comment_id {
+    margin: 0;
+    font-weight: bold;
+}
+
+.comment_text {
+    margin-top: 1px
+    margin-bottom: 1px;
+}
+
+.comment_meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9em;
+    color: rgba(0, 0, 0, 0.3);
+}
+
+.comment_meta .comment_date,
+.comment_meta .comment_reply {
+    margin-right: 10px;
+}
+
