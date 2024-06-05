@@ -62,9 +62,8 @@ public class PostService {
      * @param id 게시글 아이디
      * @return PostResponse
      */
-    public PostResponse findPostById(final Long id) {
-        Post post = postRepository.findByIdAndDeleteYn(id, false).orElseThrow(() -> new CustomException(CustomExceptionCode.PostNotFoundException));
-        return post.toDto();
+    public Post findPostById(final Long id) {
+        return postRepository.findByIdAndDeleteYn(id, false).orElseThrow(() -> new CustomException(CustomExceptionCode.PostNotFoundException));
     }
 
 

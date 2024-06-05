@@ -233,8 +233,13 @@ footer {
 }
 
 .comment_text {
-    margin-top: 1px
-    margin-bottom: 1px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+
+.comment_id {
+    font-size: 1.1em;
+    color: rgba(0, 0, 0, 1);
 }
 
 .comment_meta {
@@ -244,8 +249,25 @@ footer {
     color: rgba(0, 0, 0, 0.3);
 }
 
+.comment_modified {
+    font-size: 0.8em;
+    color: rgba(0,0,0,0.3);
+}
+
 .comment_meta .comment_date,
-.comment_meta .comment_reply {
+.comment_meta .comment_reply,
+.comment_meta .comment_edit,
+.comment_meta .comment_id {
     margin-right: 10px;
 }
 
+.comment_cancel:hover,
+.comment_delete:hover,
+.comment_update:hover,
+.comment_edit:hover,
+.comment_reply:hover,
+.comment_id:hover {
+    color: rgba(0, 0, 0, 1);
+    text-decoration: underline;
+    cursor: pointer;
+}

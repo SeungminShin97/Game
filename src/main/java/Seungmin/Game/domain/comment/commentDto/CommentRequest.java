@@ -1,8 +1,8 @@
 package Seungmin.Game.domain.comment.commentDto;
 
+import Seungmin.Game.domain.member.memberDto.Member;
+import Seungmin.Game.domain.post.postDto.Post;
 import lombok.*;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -11,9 +11,16 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CommentRequest {
 
-    private Long id;
     private Long postId;
-    private String nickname;
     private Long parentId;
-    private List<Comment>
+    private String comment;
+
+    public static Comment toEntity(CommentRequest commentRequest, Post post, Member member, Comment parent) {
+        return Comment.builder()
+                .post(post)
+                .member(member)
+                .parent(parent)
+                .children(null)
+                .comment(commentRequest.getComment()).build();
+    }
 }

@@ -46,7 +46,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Column(name = "role")
     private Role role = Role.User;
 
-    // todo 주소도 해볼까요? (주소 검색하는 것도)
+    // todo.java 주소도 해볼까요? (주소 검색하는 것도)
 
 
     @Builder

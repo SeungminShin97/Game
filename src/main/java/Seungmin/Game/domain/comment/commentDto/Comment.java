@@ -8,11 +8,11 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@ToString
 public class Comment extends BaseTimeEntity {
 
     @Id
@@ -24,6 +24,7 @@ public class Comment extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "member_id")
     private Member member;
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Comment parent;
@@ -33,8 +34,6 @@ public class Comment extends BaseTimeEntity {
     private boolean deleteYn = false;
     @Column
     private String comment;
-    @Column
-    private int likes = 0;
 
     @Builder
     public Comment(Post post, Member member, Comment parent, List<Comment> children, boolean deleteYn, String comment, int likes) {
@@ -44,10 +43,45 @@ public class Comment extends BaseTimeEntity {
         this.children = children;
         this.deleteYn = deleteYn;
         this.comment = comment;
-        this.likes = likes;
     }
 
-    public void plusLike() { likes++; }
-    public void minusLike() { likes--; }
+    public static CommentResponse toDto(Comment comment) {
+        return CommentResponse.builder()
+                .id(comment.id)
+                .postId(comment.post.getId())
+                .nickname(comment.getMember().getNickname())
+                .parentId(comment.getParent() != null ? comment.getParent().getId() : null)
+                .children(new ArrayList<>())
+                .deleteYn(comment.deleteYn)
+                .comment(comment.getComment())
+                .createdDate(comment.getCreatedDate())
+                .modifiedDate(comment.getModifiedDate()).build();
+    }
 
+    public void setChildren(Comment children) {
+        this.children.add(children);
+        children.setParent(this);
+    }
+
+    public void updateComment(String comment) {
+        this.comment = comment;
+    }
+
+    public void deleteComment() {
+        this.deleteYn = true;
+    }
+
+    @Override
+    public String toString() {
+        String childrenIdList = children.stream().map(child -> child.id.toString()).collect(Collectors.joining(", "));
+        return "Comment{" +
+                "id=" + id +
+                ", postId=" + (post != null ? post.getId() : "null") +
+                ", memberId=" + (member != null ? member.getId() : "null") +
+                ", parentId=" + (parent != null ? parent.getId() : "null") +
+                ", childrenList=[" + childrenIdList + "]" +
+                ", deleteYn=" + deleteYn +
+                ", comment='" + comment + '\'' +
+                "}\n";
+    }
 }

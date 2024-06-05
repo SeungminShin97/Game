@@ -15,7 +15,6 @@ public class LogInterceptor implements HandlerInterceptor {
         log.debug("==================BEGIN==================");
         log.debug("Request URI -> {}", request.getRequestURI());
         log.debug("Query Params -> {}", request.getQueryString());
-//        log.debug(String.valueOf(request.getParameterNames()));
         HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
     }
 

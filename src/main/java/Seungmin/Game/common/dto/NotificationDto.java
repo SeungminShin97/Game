@@ -10,7 +10,7 @@ import java.util.Map;
 @Getter
 @AllArgsConstructor
 @Builder
-public class MessageDto {
+public class NotificationDto {
 
     private String message;              // 사용자에게 전달할 메시지
     private String redirectUri;          // 리다이렉트 URI

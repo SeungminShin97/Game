@@ -23,14 +23,14 @@ public class MemberController {
     @PostMapping("/member/id")
     @ResponseBody
     public void findId() {
-        // todo 아이디 찾기 구현
+        // todo.java 아이디 찾기 구현
     };
 
     // 비밀번호 찾기
     @PostMapping("/member/password")
     @ResponseBody
     public void findPassword() {
-        // todo 비밀번호 찾기 구현 (비밀번호 변경)
+        // todo.java 비밀번호 찾기 구현 (비밀번호 변경)
     }
 
     // 회원가입

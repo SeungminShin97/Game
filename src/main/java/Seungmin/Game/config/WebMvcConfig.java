@@ -26,7 +26,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         // 게시물 인증 인터셉터
         registry.addInterceptor(authenticationInterceptor)
                 .addPathPatterns("/post/**", "/comment/**")
-                .excludePathPatterns("/post/list", "/post/view/**");
+                .excludePathPatterns("/post/list", "/post/view/**", "/comment/list/**");
 
         // 로그인 유저 정보 전달
         registry.addInterceptor(userInfoInterceptor)

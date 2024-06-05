@@ -1,9 +1,10 @@
 package Seungmin.Game.domain.post;
 
-import Seungmin.Game.common.dto.MessageDto;
+import Seungmin.Game.common.dto.NotificationDto;
 import Seungmin.Game.common.dto.SearchDto;
 import Seungmin.Game.common.exceptions.CustomException;
 import Seungmin.Game.domain.category.CategoryService;
+import Seungmin.Game.domain.comment.CommentService;
 import Seungmin.Game.domain.member.MemberService;
 import Seungmin.Game.domain.post.postDto.PostRequest;
 import Seungmin.Game.domain.post.postDto.PostResponse;
@@ -29,10 +30,11 @@ public class PostController {
     private final PostService postService;
     private final CategoryService categoryService;
     private final MemberService memberService;
+    private final CommentService commentService;
 
 
     // 메세지 전달 후 리다이렉트
-    private String showMessageAndRedirect(final MessageDto params, Model model) {
+    private String showMessageAndRedirect(final NotificationDto params, Model model) {
         model.addAttribute("params", params);
         return "common/messageRedirect";
     }
@@ -46,7 +48,7 @@ public class PostController {
     // 게시글 리스트 페이지
     @GetMapping("/")
     @PostMapping("/")
-    public String home(@PageableDefault(sort = "id", size = 20) Pageable pageable, Principal principal, Model model) {
+    public String home(@PageableDefault(sort = "id", size = 20) Pageable pageable, Model model) {
         renderCategoryListForAsideBar(model);
         return "post/list";
     }
@@ -68,23 +70,23 @@ public class PostController {
             String nickname = memberService.getMemberByAuthentication(authentication).getNickname();
             model.addAttribute("writer", nickname);
         } catch (Exception e) {
-            MessageDto messageDto = new MessageDto(e.getMessage(), "/", RequestMethod.GET, null);
-            return showMessageAndRedirect(messageDto, model);
+            NotificationDto notificationDto = new NotificationDto(e.getMessage(), "/", RequestMethod.GET, null);
+            return showMessageAndRedirect(notificationDto, model);
         }
 
         if(id != null) {    // 게시글 수정
             try{
                 if(!postService.compareLoginIdAndPostWriter(authentication, id)) // 로그인 유저와 게시글 작성자 비교
-                    return showMessageAndRedirect(new MessageDto("게시글 수정은 작성자만 가능합니다.", "/post/view/" + id, RequestMethod.GET, null), model);
-                PostResponse post = postService.findPostById(id);
+                    return showMessageAndRedirect(new NotificationDto("게시글 수정은 작성자만 가능합니다.", "/post/view/" + id, RequestMethod.GET, null), model);
+                PostResponse post = postService.findPostById(id).toDto();
                 model.addAttribute("post", post);
             } catch (Exception e) {
-                MessageDto messageDto = MessageDto.builder()
+                NotificationDto notificationDto = NotificationDto.builder()
                         .message(e.getMessage())
                         .redirectUri("/")
                         .method(RequestMethod.GET)
                         .data(null).build();
-                return showMessageAndRedirect(messageDto, model);
+                return showMessageAndRedirect(notificationDto, model);
             }
         }
         return "post/write";
@@ -96,15 +98,15 @@ public class PostController {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             postService.savePost(params, authentication);
-            MessageDto messageDto = new MessageDto("게시글 생성이 완료되었습니다.", "/", RequestMethod.GET, null);
-            return showMessageAndRedirect(messageDto, model);
+            NotificationDto notificationDto = new NotificationDto("게시글 생성이 완료되었습니다.", "/", RequestMethod.GET, null);
+            return showMessageAndRedirect(notificationDto, model);
         } catch (CustomException e) {
             logger.error(e.getMessage());
-            MessageDto messageDto = new MessageDto("알수 없는 오류가 발생했습니다. 다시 시도해 주세요", "/", RequestMethod.GET, null);
-            return showMessageAndRedirect(messageDto, model);
+            NotificationDto notificationDto = new NotificationDto("알수 없는 오류가 발생했습니다. 다시 시도해 주세요", "/", RequestMethod.GET, null);
+            return showMessageAndRedirect(notificationDto, model);
         } catch (Exception e) {
-            MessageDto messageDto = new MessageDto(e.getMessage(), "/", RequestMethod.GET, null);
-            return showMessageAndRedirect(messageDto, model);
+            NotificationDto notificationDto = new NotificationDto(e.getMessage(), "/", RequestMethod.GET, null);
+            return showMessageAndRedirect(notificationDto, model);
         }
     }
 
@@ -112,17 +114,21 @@ public class PostController {
     @GetMapping("/post/view/{postId}")
     public String viewPost(@PathVariable Long postId, Model model, Principal principal) {
         try {
-            final PostResponse postResponse = postService.findPostById(postId);
+            final PostResponse postResponse = postService.findPostById(postId).toDto();
             if(!postResponse.isPublicYn() && principal == null)
-                return showMessageAndRedirect(new MessageDto("비공개 게시글입니다. 로그인 후 이용해 주세요", "/", RequestMethod.GET, null), model);
+                return showMessageAndRedirect(new NotificationDto("비공개 게시글입니다. 로그인 후 이용해 주세요", "/", RequestMethod.GET, null), model);
+
             renderCategoryListForAsideBar(model);
+
             postService.updateViewCnt(postId);
-            PostResponse post = postService.findPostById(postId);
+
+            PostResponse post = postService.findPostById(postId).toDto();
             model.addAttribute("post", post);
+
             return "post/view";
         } catch (Exception e) {
-            MessageDto messageDto = new MessageDto(e.getMessage(), "/", RequestMethod.GET, null);
-            return showMessageAndRedirect(messageDto, model);
+            NotificationDto notificationDto = new NotificationDto(e.getMessage(), "/", RequestMethod.GET, null);
+            return showMessageAndRedirect(notificationDto, model);
         }
     }
 
@@ -132,13 +138,13 @@ public class PostController {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             postService.updatePost(params, authentication);
-            return showMessageAndRedirect(new MessageDto("게시글 수정이 완료되었습니다.", "/", RequestMethod.GET, null), model);
+            return showMessageAndRedirect(new NotificationDto("게시글 수정이 완료되었습니다.", "/", RequestMethod.GET, null), model);
 
         } catch (CustomException e) {
             logger.error(e.getMessage());
-            return showMessageAndRedirect(new MessageDto("알수 없는 오류가 발생했습니다. 다시 시도해 주세요", "/", RequestMethod.GET, null), model);
+            return showMessageAndRedirect(new NotificationDto("알수 없는 오류가 발생했습니다. 다시 시도해 주세요", "/", RequestMethod.GET, null), model);
         } catch (Exception e) {
-            return showMessageAndRedirect(new MessageDto(e.getMessage(), "/", RequestMethod.GET, null), model);
+            return showMessageAndRedirect(new NotificationDto(e.getMessage(), "/", RequestMethod.GET, null), model);
         }
     }
 
@@ -149,13 +155,13 @@ public class PostController {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if(postService.compareLoginIdAndPostWriter(authentication, postId)) {
                 postService.deletePost(postId);
-                return showMessageAndRedirect(new MessageDto("게시글 삭제가 완료되었습니다.", "/", RequestMethod.GET, null), model);
+                return showMessageAndRedirect(new NotificationDto("게시글 삭제가 완료되었습니다.", "/", RequestMethod.GET, null), model);
             } else {
-                return showMessageAndRedirect(new MessageDto("게시글 작성자만 삭제할 수 있습니다.", "/post/view/" + postId, RequestMethod.GET, null), model);
+                return showMessageAndRedirect(new NotificationDto("게시글 작성자만 삭제할 수 있습니다.", "/post/view/" + postId, RequestMethod.GET, null), model);
             }
         } catch (Exception e) {
             logger.error(e.getMessage());
-            return showMessageAndRedirect(new MessageDto("알수 없는 오류가 발생했습니다. 다시 시도해 주세요", "/", RequestMethod.GET, null), model);
+            return showMessageAndRedirect(new NotificationDto("알수 없는 오류가 발생했습니다. 다시 시도해 주세요", "/", RequestMethod.GET, null), model);
         }
     }
 
