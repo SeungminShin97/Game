@@ -47,6 +47,9 @@
 			</tr>
 			</tbody>
 		</table>
+		<div id="images">
+
+		</div>
 		<div class="post-buttons">
 			<button type="button" th:text="수정" onclick="goWritePage();"></button>
 			<button type="button" onclick="goListPage();">뒤로</button>
@@ -77,6 +80,7 @@
 	}
 
 	const post = [[${post}]];
+	const files = [[${files}]];
 
 	// 게시글 렌더링
 	function drawPost() {
@@ -85,6 +89,14 @@
 		if(post.modifiedDate != null) {
 			document.getElementById('modified').innerText = '수정일';
 			document.getElementById('modifiedDate').innerText = dayjs(post.modifiedDate).format('YYYY-MM-DD HH:mm');
+		}
+
+		if(files != null) {
+			var html = '';
+			files.forEach(file => {
+				html += `<img src="/file/post/${file.postId}/${file.uuid}/${file.originalFileName}" alt="이미지" onclick="window.open(this.src)"/>`;
+			})
+			document.getElementById("images").innerHTML = html;
 		}
 	}
 
@@ -216,13 +228,13 @@
 	}
 
 	// 댓글 수정시 유저 확인
-	function commentEdit(comment, depth) {
+	function commentEdit(commentId, depth) {
 		$.ajax({
 			type: "POST",
-			url: `/comment/user/${comment.id}`,
+			url: `/comment/user/${commentId}`,
 			success: function(request) {
 				if(request.successStatus)
-					drawCommentEdit(comment, depth);
+					drawCommentEdit(request.data, depth);
 				else
 					showErrorMessage(request.errorMessage);
 			}
@@ -235,17 +247,17 @@
 		let html = `
 			<div class="comment_box c_${comment.id}" style="margin-left: ${depth * 50}px">
 				<div class="comment_meta">
-					<span class="comment_id">${comment.querySelector(".comment_id").innerText}</span>
+					<span class="comment_id">${commentHtml.querySelector(".comment_id").innerText}</span>
 					<div>
 						<span class="comment_cancel" onclick="cancelUpdateComment(${comment}, depth);">취소</span>
 						<span> / </span>
 						<span class="comment_update" onclick="commentUpdate(${comment.id}, ${depth});">저장</span>
 					</div>
 				</div>
-				<textarea class="comment_text_edit">${comment.querySelector(".comment_text_text").innerText}</textarea>
+				<textarea class="comment_text_edit">${commentHtml.querySelector(".comment_text_text").innerText}</textarea>
 				<div class="comment_meta">
-					<span class="comment_date">${comment.querySelector(".comment_date").innerText}</span>
-					<span class="comment_delete" onclick="commentDelete(${commentId});">삭제</span>
+					<span class="comment_date">${commentHtml.querySelector(".comment_date").innerText}</span>
+					<span class="comment_delete" onclick="commentDelete(${comment.id});">삭제</span>
 				</div>
 			</div>
 		`;

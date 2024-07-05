@@ -7,7 +7,7 @@
 
 <th:block layout:fragment="contentFragment">
     <section>
-        <form id="saveForm" method="#" th:method="POST">
+        <form id="saveForm" method="#" th:method="POST" enctype="multipart/form-data">
             <input type="hidden" name="_method" th:if="${post != null}" value="put"/>
             <input type="hidden" id="id" name="id" th:if="${post != null}" th:value="${post.id}"/>
             <input type="hidden" name="viewCnt" th:if="${post != null}" th:value="${post.viewCnt}"/>
@@ -57,9 +57,12 @@
                 </tbody>
             </table>
             <textarea id="content" name="content" cols="50" rows="10" placeholder="내용을 입력해 주세요."></textarea>
+            <p>파일첨부</p>
+            <ul class="fileList"></ul>
+            <input type="file" id="file" name="file" multiple="multiple">
         </form>
         <p>
-            <button type="button" id="saveBtn" onclick="savePost();"></button>
+            <button type="button" id="saveBtn" onclick="savePost();">저장</button>
             <button type="button" onclick="deletePost();">삭제</button>
             <button type="button" onclick="goHomePage();">뒤로</button>
         </p>
@@ -74,12 +77,51 @@
         renderPostInfo();
     }
 
+    let fileList = [];  // 파일 리스트
+
+    // 파일 업로드 이벤트 바인딩
+    $(function() {
+        $("#file").change(handleFileList);
+    });
+
+    // 파일 업로드 이벤트
+    function handleFileList(event) {
+        const files = event.target.files;
+
+        for(let i = 0; i < files.length; i++)
+            fileList.push(files[i]);
+
+        updateFileList();
+    }
+
+    // 파일 리스트 업데이트
+    function updateFileList() {
+        var html ='';
+        fileList.forEach((file, index) => {
+            html += `
+                <li>
+                    ${file.name} <a class="deleteFileButton" onclick="deleteFile(${index})";>x</a>
+                </li>
+            `;
+        });
+
+        $(".fileList").html(html);
+        $("#file").val('');
+    }
+
+    // 파일 리스트 삭제
+    function deleteFile(index) {
+        fileList.splice(index, 1);
+        updateFileList();
+    }
+
 
     // 게시글 정보 렌더링
     function renderPostInfo() {
         const post =  [[${post}]];
         const categoryList = [[${categoryList}]];
         const writer = [[${writer}]];
+        const existFileList = [[${existFileList}]];
         document.getElementById('writer').textContent = writer;
 
         if(!post) {
@@ -104,6 +146,24 @@
         })
 
 
+        if(existFileList != null) {
+            existFileList.forEach(file => {
+                $.ajax({
+                    type: "GET",
+                    url: `/file/post/${file.postId}/${file.uuid}/${file.originalFileName}`,
+                    async: false,
+                    success: function(response) {
+                        const blob = new Blob([response]);
+                        const fileObject = new File([blob], file.originalFileName, { type: file.extension });
+                        fileList.push(fileObject);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX request failed error:', status, error);
+                    }
+                });
+            });
+        }
+        updateFileList();
     }
 
 
@@ -115,14 +175,46 @@
 
     // 게시글 저장
     function savePost() {
+        var categoryChecked = document.getElementById("category");
+        if(categoryChecked.value === "") {
+            alert("게시글을 선택해주세요.");
+            return;
+        }
+
         const form = document.getElementById('saveForm');
         document.getElementById('saveBtn').disabled = true;
 
-        if([[${post}]] != null)
-            form.action = '/post/update';
-        else
-            form.action = '/post/save';
-        form.submit();
+        const data = new FormData(form);
+        fileList.forEach(file => {
+            data.append('files', file);
+        });
+        const url = ([[${post}]] != null) ? '/post/update' : '/post/save';
+
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: data,
+            processData: false, // 객체 문자열 변환 x
+            contentType: false, // content-type 헤더 설정 x
+            success: function(response) {
+                console.log(response);
+                if(response.successStatus) {
+                    if(response.postSaved)
+                        alert("게시글이 저장되었습니다.");
+                    else
+                        alert("게시글이 수정되었습니다.");
+                    window.location.href = "/";
+                } else {
+                    alert(response.errorMessage);
+                    window.location.reload();
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX request failed error:', status, error);
+            }
+
+        })
     }
 
 
@@ -145,3 +237,4 @@
 </th:block>
 
 </html>
+

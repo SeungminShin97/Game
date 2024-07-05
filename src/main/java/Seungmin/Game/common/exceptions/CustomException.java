@@ -4,7 +4,11 @@ public class CustomException extends RuntimeException{
 
     public CustomException(CustomExceptionCode code) {
         super(code.getErrorMessage());
-        String message = code.getErrorMessage();
     }
+
+    public CustomException(CustomExceptionCode code, String errorMessage) {
+        super(errorMessage);
+    }
+
 
 }

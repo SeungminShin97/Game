@@ -271,3 +271,25 @@ footer {
     text-decoration: underline;
     cursor: pointer;
 }
+
+.deleteFileButton {
+    color: rgba(0,0,0,0.3);
+}
+
+.deleteFileButton:hover {
+    color: rgba(0,0,0,1);
+    cursor: pointer;
+}
+
+#images {
+      display: flex;
+      flex-direction: column; /* 세로로 정렬 */
+      gap: 10px; /* 이미지 사이에 간격 추가 */
+}
+
+#images img {
+    width: 600px;
+    height: 600px;
+    object-fit: cover; /* 이미지 비율을 유지하면서 크기 조절 */
+    cursor: pointer; /* 클릭 가능하도록 커서 변경 */
+}

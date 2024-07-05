@@ -5,6 +5,7 @@ import Seungmin.Game.common.exceptions.CustomException;
 import Seungmin.Game.common.exceptions.CustomExceptionCode;
 import Seungmin.Game.domain.category.Category;
 import Seungmin.Game.domain.category.CategoryService;
+import Seungmin.Game.domain.file.FileService;
 import Seungmin.Game.domain.member.MemberRepository;
 import Seungmin.Game.domain.member.MemberService;
 import Seungmin.Game.domain.member.memberDto.Member;
@@ -18,6 +19,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +31,7 @@ public class PostService {
     private final CategoryService categoryService;
     private final MemberService memberService;
     private final MemberRepository memberRepository;
+    private final FileService fileService;
 
 
     /**
@@ -43,17 +48,24 @@ public class PostService {
      * @param params 게시글 정보
      */
     @Transactional
-    public void savePost(final PostRequest params, final Authentication authentication) {
+    public void savePost(final PostRequest params, final Authentication authentication, final ArrayList<MultipartFile> files) {
         try {
             Category category = categoryService.showCategoryByCategory(params.getCategory());
             Member member = memberService.getMemberByAuthentication(authentication);
             params.setMember(member);
             Post post = params.toEntity(category);
             postRepository.save(post);
+
+            try {
+                fileService.savePostFile(post, files);
+            } catch (Exception e) {
+                hardDeletePost(post.getId());
+                throw new CustomException(CustomExceptionCode.FileCreateFailedException, e.getMessage());
+            }
         } catch (CustomException e) {   // 사용자 검색 실패
             throw e;
         } catch (Exception e) {
-            throw new CustomException(CustomExceptionCode.SavePostFailedException);
+            throw new CustomException(CustomExceptionCode.PostSaveFailedException);
         }
     }
 
@@ -88,7 +100,7 @@ public class PostService {
      * 게시글 수정
      */
     @Transactional
-    public void updatePost(final PostRequest postRequest, final Authentication authentication) {
+    public void updatePost(final PostRequest postRequest, final Authentication authentication, final ArrayList<MultipartFile> files) {
         try {
             postRequest.setMember(memberService.getMemberByAuthentication(authentication));
             Post post = postRepository.findById(postRequest.getId()).orElse(null);
@@ -97,24 +109,43 @@ public class PostService {
             if(post != null && category != null)
                 post.updatePost(postRequest, category);
 
+            try {
+                fileService.updatePostFile(post, files);
+            } catch (Exception e) {
+                throw new CustomException(CustomExceptionCode.FileUpdateFailedException, e.getMessage());
+            }
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            throw new CustomException(CustomExceptionCode.UpdatePostFailedException);
+            throw new CustomException(CustomExceptionCode.PostUpdateFailedException);
+        }
+    }
+
+
+    /**
+     * 게시글 물리 삭제
+     * @param postId
+     */
+    @Transactional
+    public void hardDeletePost(final Long postId) {
+        try {
+            postRepository.deleteById(postId);
+        } catch (Exception e) {
+            throw new CustomException(CustomExceptionCode.PostDeleteFailedException, "게시글 물리 삭제 실패");
         }
     }
 
     /**
-     * 게시글 삭제
+     * 게시글 논리 삭제
      * @param postId
      */
     @Transactional
-    public void deletePost(final long postId) {
+    public void softDeletePost(final long postId) {
         try {
             Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(CustomExceptionCode.PostNotFoundException));
             post.deletePost();
         } catch (Exception e) {
-            throw new CustomException(CustomExceptionCode.DeletePostFailedException);
+            throw new CustomException(CustomExceptionCode.PostDeleteFailedException, "게시글 논리 삭제 실패");
         }
     }
 

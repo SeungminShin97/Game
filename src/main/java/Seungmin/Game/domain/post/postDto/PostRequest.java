@@ -16,6 +16,7 @@ public class PostRequest {
     private String title;
     private String content;
     private Member member;
+//    private
     private int viewCnt;
     private boolean publicYn;
     private boolean noticeYn;

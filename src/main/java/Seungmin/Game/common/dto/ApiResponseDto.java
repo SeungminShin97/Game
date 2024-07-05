@@ -12,4 +12,5 @@ public class ApiResponseDto {
     private boolean successStatus;
     private String errorMessage;
     private Object data;
+    private boolean postSaved;    // 저장이면 true, 수정이면 false
 }
