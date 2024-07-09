@@ -166,7 +166,7 @@
 		let html = '';
 
 		if(comment.deleteYn)
-			html = deletedCommentHtml();
+			html = deletedCommentHtml(depth);
 		else
 			html = renderCommentHtml(comment, depth);
 
@@ -210,9 +210,9 @@
 	}
 
 	// 삭제된 댓글 html 생성
-	function deletedCommentHtml() {
+	function deletedCommentHtml(depth) {
 		let html = `
-			<div class="comment_box">
+			<div class="comment_box" style="margin-left: ${depth * 50}px">
 				<div class="comment_meta">
 					<span class="comment_id"></span>
 					<span class="comment_edit"></span>
@@ -249,7 +249,7 @@
 				<div class="comment_meta">
 					<span class="comment_id">${commentHtml.querySelector(".comment_id").innerText}</span>
 					<div>
-						<span class="comment_cancel" onclick="cancelUpdateComment(${comment}, depth);">취소</span>
+						<span class="comment_cancel" onclick="cancelUpdateComment(${comment.id}, ${depth});">취소</span>
 						<span> / </span>
 						<span class="comment_update" onclick="commentUpdate(${comment.id}, ${depth});">저장</span>
 					</div>
@@ -257,7 +257,7 @@
 				<textarea class="comment_text_edit">${commentHtml.querySelector(".comment_text_text").innerText}</textarea>
 				<div class="comment_meta">
 					<span class="comment_date">${commentHtml.querySelector(".comment_date").innerText}</span>
-					<span class="comment_delete" onclick="commentDelete(${comment.id});">삭제</span>
+					<span class="comment_delete" onclick="commentDelete(${comment.id}, ${depth});">삭제</span>
 				</div>
 			</div>
 		`;
@@ -312,7 +312,7 @@
 	}
 
 	// 댓글 삭제
-	function commentDelete(commentId) {
+	function commentDelete(commentId, depth) {
 		if(confirm("정말 삭제하시겠습니까?")) {
 			$.ajax({
 				type: "DELETE",
@@ -320,7 +320,7 @@
 				success: function(request) {
 					if(request.successStatus) {
 						alert("댓글이 삭제되었습니다.");
-						drawUpdatedComment(request.data, depth);
+						getComments();
 					}
 					else
 						showErrorMessage(request.errorMessage);
@@ -330,9 +330,19 @@
 	}
 
 	// 수정 취소 버튼
-	function cancelUpdateComment(comment, depth) {
-		document.querySelector(`.comment_box.c_${comment.id}`);
-		var html = renderCommentHtml(comment, depth);
+	function cancelUpdateComment(commentId, depth) {
+		$.ajax({
+			type: "GET",
+			url: `/comment/${commentId}`,
+			success: function(request) {
+				if(request.successStatus){
+					html = renderCommentHtml(request.data, depth);
+					document.querySelector(`.comment_box.c_${commentId}`).outerHTML = html;
+				}
+				else
+					showErrorMessage(request.errorMessage);
+			}
+		});
 	}
 
 	// 답글 취소 버튼

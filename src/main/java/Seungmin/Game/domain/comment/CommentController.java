@@ -24,7 +24,9 @@ public class CommentController {
     public ApiResponseDto saveComment(@RequestBody final CommentRequest commentRequest, @PathVariable final Long postId) {
         try{
             commentRequest.setPostId(postId);
-            List<CommentResponse> list = commentService.saveComment(commentRequest);
+            commentService.saveComment(commentRequest);
+//            List<CommentResponse> list = commentService.saveComment(commentRequest);
+            List<CommentResponse> list = commentService.getPaginateHierarchicallyComments(postId);
             return ApiResponseDto.builder()
                     .successStatus(true)
                     .errorMessage(null)
@@ -34,9 +36,21 @@ public class CommentController {
         }
     }
 
-    // 댓글 조회
+    @GetMapping("/comment/{commentId}")
+    public ApiResponseDto getComment(@PathVariable final Long commentId){
+        try {
+            CommentResponse comment = commentService.getCommentById(commentId);
+            return ApiResponseDto.builder()
+                    .successStatus(true)
+                    .data(comment).build();
+        } catch (Exception e) {
+            return commentExceptionHandler(e, "댓글 불러오기 실패, 재시도 바랍니다.");
+        }
+    }
+
+    // 댓글 리스트 조회
     @GetMapping("/comment/list/{postId}")
-    public ApiResponseDto getComment(@PathVariable final Long postId) {
+    public ApiResponseDto getCommentList(@PathVariable final Long postId) {
         try{
             List<CommentResponse> list = commentService.getPaginateHierarchicallyComments(postId);
             return ApiResponseDto.builder()

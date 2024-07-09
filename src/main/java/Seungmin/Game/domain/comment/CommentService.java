@@ -28,8 +28,9 @@ public class CommentService {
     private final PostService postService;
     private final MemberService memberService;
 
+
     @Transactional
-    public List<CommentResponse> saveComment(CommentRequest commentRequest) {
+    public void saveComment(CommentRequest commentRequest) {
         Post post = postService.findPostById(commentRequest.getPostId());
         Member member = getMemberByAuthentication();
         Comment parent = null;
@@ -37,7 +38,7 @@ public class CommentService {
                 parent = commentRepository.findById(commentRequest.getParentId()).orElseThrow(() -> new CustomException(CustomExceptionCode.CommentNotFoundException));
         Comment comment = CommentRequest.toEntity(commentRequest, post, member, parent);
         commentRepository.save(comment);
-        return getPaginateHierarchicallyComments(post.getId());
+//        return getPaginateHierarchicallyComments(post.getId());
     }
 
 
@@ -70,6 +71,7 @@ public class CommentService {
     public CommentResponse updateComment(final Long commentId, String text) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CustomException(CustomExceptionCode.CommentNotFoundException));
         comment.updateComment(text);
+        commentRepository.saveAndFlush(comment);
         return Comment.toDto(comment);
     };
 

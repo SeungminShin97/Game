@@ -8,7 +8,6 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -71,17 +70,18 @@ public class Comment extends BaseTimeEntity {
         this.deleteYn = true;
     }
 
-    @Override
-    public String toString() {
-        String childrenIdList = children.stream().map(child -> child.id.toString()).collect(Collectors.joining(", "));
-        return "Comment{" +
-                "id=" + id +
-                ", postId=" + (post != null ? post.getId() : "null") +
-                ", memberId=" + (member != null ? member.getId() : "null") +
-                ", parentId=" + (parent != null ? parent.getId() : "null") +
-                ", childrenList=[" + childrenIdList + "]" +
-                ", deleteYn=" + deleteYn +
-                ", comment='" + comment + '\'' +
-                "}\n";
-    }
+//      NPE 발생발생!
+//    @Override
+//    public String toString() {
+//        String childrenIdList = children.stream().map(child -> child.id.toString()).collect(Collectors.joining(", "));
+//        return "Comment{" +
+//                "id=" + id +
+//                ", postId=" + (post != null ? post.getId() : "null") +
+//                ", memberId=" + (member != null ? member.getId() : "null") +
+//                ", parentId=" + (parent != null ? parent.getId() : "null") +
+//                ", childrenList=[" + childrenIdList + "]" +
+//                ", deleteYn=" + deleteYn +
+//                ", comment='" + comment + '\'' +
+//                "}\n";
+//    }
 }
