@@ -21,10 +21,12 @@ public class UserInfoInterceptor implements HandlerInterceptor {
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         if(modelAndView != null) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if(authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken))
-                modelAndView.addObject("loginUser", memberService.getMemberByAuthentication(authentication).getNickname());
-            else
+            if(authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
+                String nickname = memberService.getMemberByAuthentication(authentication).getNickname();
+                modelAndView.addObject("loginUser", nickname);
+            } else {
                 modelAndView.addObject("loginUser", null);
+            }
         }
     }
 }

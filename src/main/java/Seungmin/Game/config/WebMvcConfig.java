@@ -30,6 +30,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
         // 로그인 유저 정보 전달
         registry.addInterceptor(userInfoInterceptor)
-                .addPathPatterns("/**");
+                .addPathPatterns("/**")
+                .excludePathPatterns("/oauth/kakao/callback");
     }
 }

@@ -2,9 +2,13 @@ package Seungmin.Game.domain.member.memberDto;
 
 import Seungmin.Game.common.BaseTimeEntity;
 import Seungmin.Game.common.enums.Gender;
+import Seungmin.Game.common.enums.Provider;
 import Seungmin.Game.common.enums.Role;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -28,16 +32,19 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Column(name = "loginId", nullable = false, unique = true)
     private String loginId;
 
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
+
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name")
     private String name;
 
     @Column(name = "nickname", nullable = false)
     private String nickname;
 
-    @Column(name = "gender", nullable = false)
+    @Column(name = "gender")
     private Gender gender;
 
     @Column(name = "birthday")
@@ -46,27 +53,34 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Column(name = "role")
     private Role role = Role.User;
 
+    @Column(name = "provider")
+    private Provider provider;
+
     // todo.java 주소도 해볼까요? (주소 검색하는 것도)
 
 
     @Builder
-    public Member (String loginId, String password, String name, String nickname, Gender gender, LocalDate birthday) {
+    public Member (String loginId, String email, String password, String name, String nickname, Gender gender, LocalDate birthday, Provider provider) {
         this.loginId = loginId;
+        this.email = email;
         this.password = password;
         this.name = name;
         this.nickname = nickname;
         this.gender = gender;
         this.birthday = birthday;
+        this.provider = provider;
     }
 
     public MemberResponse toDto() {
         return MemberResponse.builder()
                 .loginId(loginId)
+                .email(email)
                 .name(name)
                 .nickname(nickname)
                 .gender(gender)
                 .birthday(birthday)
                 .createdDate(createdDate)
+                .provider(provider)
                 .build();
     }
 

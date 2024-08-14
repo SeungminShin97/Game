@@ -22,6 +22,11 @@
 				<label for="password">비밀번호:</label>
 				<input type="password" id="password" name="password" required>
 			</div>
+			<div>
+				<a th:href="@{/oauth/kakao}">
+					<img th:src="@{/img/kakao_login_small.png}">
+				</a>
+			</div>
 			<div class="form-group actions">
 				<button>로그인</button>
 			</div>
@@ -92,6 +97,10 @@
 					<span id="passwordMatchResult"></span>
 				</div>
 				<div class="form-group">
+					<label for="signupModalEmail">이메일:</label>
+					<input type="email" id="signupModalEmail" name="signupModalEmail" required>
+				</div>
+				<div class="form-group">
 					<label for="signupModalName">이름:</label>
 					<input type="text" id="signupModalName" name="signupModalName" required>
 				</div>
@@ -133,38 +142,11 @@
 	};
 
 
-
-<!--	// 로그인-->
-<!--	function login() {-->
-<!--		const formData = {-->
-<!--			loginId: document.getElementById('loginId').value,-->
-<!--			password: document.getElementById('password').value-->
-<!--		}-->
-<!--		console.log(formData);-->
-<!--		$.ajax({-->
-<!--			type: "POST",-->
-<!--			url: `/member/login`,-->
-<!--			data: formData,-->
-<!--			async:false,-->
-<!--			success: function(response) {-->
-<!--				if(response.success) {-->
-<!--					alert("환영합니다. " + response.nickname + "님!");-->
-<!--					window.location.href = "/";-->
-<!--				}-->
-<!--				else-->
-<!--					alert(response.errorMessage);-->
-<!--			},-->
-<!--            error: function(xhr, status, error) {-->
-<!--                console.error('AJAX request failed error:', status, error);-->
-<!--            }-->
-<!--		});-->
-<!--	}-->
-
-
 	// 회원가입
 	function signup() {
 		const signupData = {
 		    loginId: document.getElementById('signupModalUserId').value,
+		    email: document.getElementById('signupModalEmail').value,
 		    password: document.getElementById('signupModalPassword').value,
 		    name: document.getElementById('signupModalName').value,
 		    gender: document.getElementById('signupModalGender').value,
@@ -176,8 +158,8 @@
 			url: `/member/signup`,
 			contentType: 'application/json',
 			data: JSON.stringify(signupData),
-			success : function(requestBoolean) {
-				if(requestBoolean) {
+			success : function(response) {
+				if(response.successStatus) {
 					alert("회원가입 성공");
 					location.reload();
 				}

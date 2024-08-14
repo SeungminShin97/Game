@@ -25,16 +25,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-//        final String username = authentication.getName();
-//        Member member = memberRepository.findByLoginId(username).orElse(null);
-//        String nickname = (member != null) ? member.getNickName() : null;
-//        LoginDto loginDto = LoginDto.builder().nickname(nickname).success(true).errorMessage(null).build();
-//
-//        response.setContentType("application/json");
-//        response.setCharacterEncoding("UTF-8");
-//        response.setStatus(HttpServletResponse.SC_OK);  // 200
-//        response.getWriter().print(mapper.writeValueAsString(loginDto));
-//        response.getWriter().flush();
         response.sendRedirect("/");
     }
 

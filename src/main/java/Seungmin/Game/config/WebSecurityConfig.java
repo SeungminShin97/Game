@@ -48,6 +48,7 @@ public class WebSecurityConfig {
                                 .logoutUrl("/member/logout")
                                 .logoutSuccessUrl("/")
                                 .deleteCookies("JSESSIONID"))
-                .csrf(AbstractHttpConfigurer::disable).build();
+                .csrf(AbstractHttpConfigurer::disable)
+                .build();
     }
 }

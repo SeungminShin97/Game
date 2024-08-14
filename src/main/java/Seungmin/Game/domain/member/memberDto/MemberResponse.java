@@ -1,6 +1,7 @@
 package Seungmin.Game.domain.member.memberDto;
 
 import Seungmin.Game.common.enums.Gender;
+import Seungmin.Game.common.enums.Provider;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -13,11 +14,13 @@ import java.time.LocalDateTime;
 public class MemberResponse {
 
     private String loginId;
+    private String email;
     private String name;
     private String nickname;
     private Gender gender;
     private LocalDate birthday;
     private LocalDateTime createdDate;
+    private Provider provider;
 
 
 }

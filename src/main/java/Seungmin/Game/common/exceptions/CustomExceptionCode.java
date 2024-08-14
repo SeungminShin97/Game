@@ -12,6 +12,8 @@ public enum CustomExceptionCode {
     PostUpdateFailedException("게시글 수정 실패, 다시 시도해 주세요"),
     PostDeleteFailedException("게시글 삭제 실패, 다시 시도해 주세요"),
 
+    MemberSaveFaileException("회원 저장 실패, 다시 시도해 주세요"),
+
     CommentNotFoundException("댓글을 찾을 수 없습니다."),
 
     FileCreateFailedException("파일 저장 중 오류가 발생했습니다."),

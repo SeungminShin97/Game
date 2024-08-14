@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html
+		lang="ko"
+		xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: main-head}">
+
+</head>
+
+<th:block layout:fragment="title">
+	<title>addMemberInfo</title>
+</th:block>
+
+<body>
+	<div class="login-container">
+		<form id="oauthInfo">
+			<div class="form-group">
+				<label for="email">이메일:</label>
+				<input type="email" id="email" name="email" readonly>
+			</div>
+			<div class="form-group">
+				<label for="nickname">닉네임:</label>
+				<input type="text" id="nickname" name="nickname">
+			</div>
+			<div class="form-group">
+				<label for="name">이름:</label>
+				<input type="text" id="name" name="name">
+			</div>
+			<div class="form-group">
+				<label for="gender">성별:</label>
+				<select id="gender" name="gender">
+					<option value="male">남성</option>
+					<option value="female">여성</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="birthday">생일:</label>
+				<input type="date" id="birthday" name="birthday">
+			</div>
+			<button type="button" onclick="signup();">저장</button>
+		</form>
+	</div>
+
+	<link rel="stylesheet" type="text/css" th:href="@{/css/login.css}">
+</body>
+<script th:inline="javascript">
+/*<![CDATA[*/
+	window.onload = function() {
+		alert("추가 사용자 정보를 입력해주세요.");
+		drawOAuthInfo();
+	}
+
+	function drawOAuthInfo() {
+		const oauthMember = [[${oauthMember}]];
+
+		$('#email').val(oauthMember.email);
+		$('#nickname').val(oauthMember.loginId);
+		$('#name').val(oauthMember.name);
+	}
+
+	function signup() {
+		const oauthMember = [[${oauthMember}]];
+		if($('#birthday').val() === "") {
+			alert("생년월일을 입력해주세요");
+			return;
+		}
+
+
+		const signupData = {
+			loginId: oauthMember.loginId,
+			email: oauthMember.email,
+			name: $('#name').val(),
+			gender: $('#gender').val(),
+			birthday: $('#birthday').val()
+		}
+
+		$.ajax({
+			type: "POST",
+			url: `/member/oauth`,
+			contentType: 'application/json',
+			data: JSON.stringify(signupData),
+			success : function(response) {
+				if(response.successStatus) {
+					alert("회원 정보 등록 성공");
+					window.location.href = "/";
+				}
+				else {
+					alert("회원가입 실패, 다시 시도하십시오");
+				}
+			},
+			error: function(xhr, status, error) {
+                console.error('AJAX request failed error:', status, error);
+            }
+		});
+	}
+/*]]>*/
+</script>
+</html>

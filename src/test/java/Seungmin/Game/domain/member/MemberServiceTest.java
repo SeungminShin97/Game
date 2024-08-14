@@ -1,7 +1,9 @@
 package Seungmin.Game.domain.member;
 
 import Seungmin.Game.common.enums.Gender;
+import Seungmin.Game.common.enums.Provider;
 import Seungmin.Game.domain.member.memberDto.Member;
+import Seungmin.Game.domain.member.memberDto.MemberRequest;
 import Seungmin.Game.domain.post.PostRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +18,7 @@ import org.springframework.test.annotation.Commit;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
@@ -82,5 +85,24 @@ class MemberServiceTest {
         System.out.println("=====================================================================");
         memberRepository.findAll().forEach(t -> System.out.println(t.toString()));
         System.out.println("=====================================================================");
+    }
+
+    @Test
+    void saveAndGetMember() {
+        // given
+        String tempPassword = UUID.randomUUID().toString();
+        MemberRequest registerMember = new MemberRequest();
+        registerMember.setLoginId("loginId");
+        registerMember.setNickname("loginId");
+        registerMember.setProvider(Provider.Kakao);
+        Member member1 = registerMember.toEntity(tempPassword);
+        memberRepository.save(member1);
+
+        // when
+        Member member2 = memberRepository.findByLoginId("loginId").orElse(null);
+
+        // given
+        Assertions.assertThat(member2).isNotNull();
+        Assertions.assertThat(member2.getProvider()).isEqualTo(Provider.Kakao);
     }
 }
