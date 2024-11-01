@@ -2,6 +2,7 @@ package Seungmin.Game.domain.member.memberDto;
 
 import Seungmin.Game.common.enums.Gender;
 import Seungmin.Game.common.enums.Provider;
+import Seungmin.Game.common.enums.Role;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -20,7 +21,9 @@ public class MemberResponse {
     private Gender gender;
     private LocalDate birthday;
     private LocalDateTime createdDate;
+    private Role role;
     private Provider provider;
+    private String identifier;
 
 
 }

@@ -1,12 +1,13 @@
 package Seungmin.Game.interceptor;
 
 import Seungmin.Game.domain.member.MemberService;
+import Seungmin.Game.domain.member.memberDto.Member;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -21,10 +22,11 @@ public class UserInfoInterceptor implements HandlerInterceptor {
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         if(modelAndView != null) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if(authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
-                String nickname = memberService.getMemberByAuthentication(authentication).getNickname();
+            try{
+                Member member = memberService.getMemberByAuthentication(authentication);
+                String nickname = member.getNickname();
                 modelAndView.addObject("loginUser", nickname);
-            } else {
+            } catch(UsernameNotFoundException e){
                 modelAndView.addObject("loginUser", null);
             }
         }

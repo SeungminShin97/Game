@@ -1,4 +1,4 @@
-package Seungmin.Game.config.handlers;
+package Seungmin.Game.config.handlers.Authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.RequestDispatcher;

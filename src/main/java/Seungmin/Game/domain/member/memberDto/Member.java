@@ -41,7 +41,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "nickname", nullable = false)
+    @Column(name = "nickname")
     private String nickname;
 
     @Column(name = "gender")
@@ -51,16 +51,21 @@ public class Member extends BaseTimeEntity implements UserDetails {
     private LocalDate birthday;
 
     @Column(name = "role")
-    private Role role = Role.User;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @Column(name = "provider")
+    @Enumerated(EnumType.STRING)
     private Provider provider;
+
+    @Column(name = "identifier")
+    private String identifier;
 
     // todo.java 주소도 해볼까요? (주소 검색하는 것도)
 
 
     @Builder
-    public Member (String loginId, String email, String password, String name, String nickname, Gender gender, LocalDate birthday, Provider provider) {
+    public Member (String loginId, String email, String password, String name, String nickname, Gender gender, LocalDate birthday, Provider provider, Role role, String identifier) {
         this.loginId = loginId;
         this.email = email;
         this.password = password;
@@ -69,6 +74,8 @@ public class Member extends BaseTimeEntity implements UserDetails {
         this.gender = gender;
         this.birthday = birthday;
         this.provider = provider;
+        this.role = role;
+        this.identifier = identifier;
     }
 
     public MemberResponse toDto() {
@@ -80,8 +87,18 @@ public class Member extends BaseTimeEntity implements UserDetails {
                 .gender(gender)
                 .birthday(birthday)
                 .createdDate(createdDate)
+                .role(role)
                 .provider(provider)
+                .identifier(identifier)
                 .build();
+    }
+
+    public void updateOAuthMember(MemberRequest memberRequest) {
+        this.name = memberRequest.getName();
+        this.nickname = memberRequest.getNickname();
+        this.gender = memberRequest.getGender();
+        this.birthday = memberRequest.getBirthday();
+        this.role = Role.User;
     }
 
     // 권한 반환

@@ -58,6 +58,16 @@ public class MemberService implements UserDetailsService {
         }
     }
 
+    @Transactional
+    public Long updateOAuthMemberByIdentifier(final MemberRequest memberRequest) {
+        if(memberRequest.getIdentifier() == null)
+            throw new IllegalArgumentException("Identifier가 비어 있습니다.");
+
+        Member member = memberRepository.findByIdentifier(memberRequest.getIdentifier()).orElseThrow(() -> new UsernameNotFoundException("유저 검색 실패"));
+        member.updateOAuthMember(memberRequest);
+        return member.getId();
+    }
+
 
     /**
      * 아이디 중복 검사
@@ -70,39 +80,30 @@ public class MemberService implements UserDetailsService {
         return memberRepository.findByLoginId(loginId).isEmpty();
     }
 
-
-    public MemberResponse getMemberById(Long id) {
-        Member member = memberRepository.findById(id).orElse(null);
-        if(member == null)
-            return null;
-        else
-            return member.toDto();
+    public MemberResponse getMemberById(final Long id) {
+        Member member = memberRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("유저 검색 실패"));
+        return member.toDto();
     }
 
-
-    // 카카오 정보로 회원 검색
-    public MemberResponse getMemberByLoginId(String loginId) {
-        Member member = memberRepository.findByLoginId(loginId).orElse(null);
-        if(member == null)
-            return null;
-        else
-            return member.toDto();
-    }
-
-
-    public MemberResponse getMemberByEmail(final String email) {
-        Member member = memberRepository.findByEmail(email).orElse(null);
-        if(member != null)
-            return member.toDto();
-        else
-            return null;
+    public MemberResponse getMemberByIdentifier(String identifier) {
+            Member member = memberRepository.findByIdentifier(identifier).orElse(null);
+            if(member != null)
+                return member.toDto();
+            else
+                throw new UsernameNotFoundException("유저 검색 실패");
     }
 
     public Member getMemberByAuthentication(Authentication authentication) {
         if (confirmAuthenticationIsAnonymous(authentication)) {
-            String loginId = authentication.getName();
-            return memberRepository.findByLoginId(loginId)
-                    .orElseThrow(() -> new UsernameNotFoundException("유저 검색 실패"));
+            if(authentication instanceof UsernamePasswordAuthenticationToken) {             // 일반 로그인
+                String loginId = authentication.getName();
+                return memberRepository.findByLoginId(loginId)
+                        .orElseThrow(() -> new UsernameNotFoundException("유저 검색 실패"));
+            }
+            else {                                                                          // oauth2 로그인
+                String identifier = authentication.getName();
+                return memberRepository.findByIdentifier(identifier).orElseThrow(() -> new UsernameNotFoundException("유저 검색 실패"));
+            }
         }
         throw new UsernameNotFoundException("비로그인 유저");
     }

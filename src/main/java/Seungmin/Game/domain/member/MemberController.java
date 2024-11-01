@@ -1,18 +1,15 @@
 package Seungmin.Game.domain.member;
 
 import Seungmin.Game.common.dto.ApiResponseDto;
-import Seungmin.Game.common.enums.Provider;
+import Seungmin.Game.common.dto.NotificationDto;
 import Seungmin.Game.domain.member.memberDto.MemberRequest;
 import Seungmin.Game.domain.member.memberDto.MemberResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @Controller
 @RequiredArgsConstructor
@@ -57,24 +54,37 @@ public class MemberController {
         }
     }
 
-    // oauth 회원가입
+    // oauth 추가정보 매핑
+    @GetMapping("/member/oauth/{identifier}")
+    public String addMemberInfo(@PathVariable String identifier, Model model) {
+        try{
+            MemberResponse memberResponse = memberService.getMemberByIdentifier(identifier);
+            ApiResponseDto apiResponseDto = ApiResponseDto.builder()
+                            .data(memberResponse).successStatus(true).build();
+            model.addAttribute("apiResponseDto", apiResponseDto);
+            return "member/addMemberInfo";
+        } catch(Exception e) {
+            NotificationDto params = NotificationDto.builder().message(e.getMessage()).redirectUri("/").build();
+            model.addAttribute("params", params);
+            return "common/messageRedirect";
+        }
+    }
+
+
+    // oauth 추가정보 저장
     @PostMapping("/member/oauth")
     @ResponseBody
     public ApiResponseDto oauthSignup(@RequestBody MemberRequest memberRequest, HttpServletRequest httpServletRequest) {
-        String tempPassword = UUID.randomUUID().toString();
-        memberRequest.setPassword(tempPassword);
-        memberRequest.setProvider(Provider.Kakao);
         try{
-            Long id = memberService.saveMember(memberRequest);
-            MemberResponse kakaoMember = memberService.getMemberById(id);
-            memberService.autoLogin(kakaoMember);
-            HttpSession session = httpServletRequest.getSession(true);
-            session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+            Long id = memberService.updateOAuthMemberByIdentifier(memberRequest);
+            MemberResponse memberResponse = memberService.getMemberById(id);
+            memberService.autoLogin(memberResponse);
             return ApiResponseDto.builder()
-                    .successStatus(true).build();
+                    .successStatus(true).redirectUri("/").build();
         } catch (Exception e) {
             return ApiResponseDto.builder()
                     .successStatus(false)
+                    .redirectUri("/member")
                     .errorMessage(e.toString()).build();
         }
     }

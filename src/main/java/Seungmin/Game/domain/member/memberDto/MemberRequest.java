@@ -2,6 +2,7 @@ package Seungmin.Game.domain.member.memberDto;
 
 import Seungmin.Game.common.enums.Gender;
 import Seungmin.Game.common.enums.Provider;
+import Seungmin.Game.common.enums.Role;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
@@ -23,7 +24,9 @@ public class MemberRequest {
     private String nickname;
     private Gender gender;
     private LocalDate birthday;
+    private Role role;
     private Provider provider;
+    private String identifier;
 
     public Member toEntity(String encodedPassword) {
         return Member.builder()
@@ -34,7 +37,9 @@ public class MemberRequest {
                 .nickname(nickname)
                 .gender(gender)
                 .birthday(birthday)
+                .role(role)
                 .provider(provider)
+                .identifier(identifier)
                 .build();
     }
 }

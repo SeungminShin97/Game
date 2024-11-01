@@ -1,5 +1,6 @@
 package Seungmin.Game.domain.member;
 
+import Seungmin.Game.common.enums.Provider;
 import Seungmin.Game.domain.member.memberDto.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -9,4 +10,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByLoginId(String loginId);
     Optional<Member> findByEmail(String email);
+    Optional<Member> findByIdentifierAndProvider(String identifier, Provider provider);
+    Optional<Member> findByIdentifier(String identifier);
 }

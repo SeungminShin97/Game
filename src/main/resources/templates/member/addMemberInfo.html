@@ -51,47 +51,67 @@
 	}
 
 	function drawOAuthInfo() {
-		const oauthMember = [[${oauthMember}]];
+		const apiResponseDto = [[${apiResponseDto}]];
+		console.log(apiResponseDto);
+		if(apiResponseDto.successStatus) {
+			const data = apiResponseDto.data;
 
-		$('#email').val(oauthMember.email);
-		$('#nickname').val(oauthMember.loginId);
-		$('#name').val(oauthMember.name);
+			$('#email').val(data.email);
+			$('#nickname').val(data.nickname);
+			$('#name').val(data.name);
+		}
+		else {
+			alert("오류 오류");
+			window.location.href = "/";
+		}
 	}
 
 	function signup() {
-		const oauthMember = [[${oauthMember}]];
+		const data = [[${apiResponseDto}]].data;
 		if($('#birthday').val() === "") {
 			alert("생년월일을 입력해주세요");
 			return;
 		}
 
-
-		const signupData = {
-			loginId: oauthMember.loginId,
-			email: oauthMember.email,
-			name: $('#name').val(),
-			gender: $('#gender').val(),
-			birthday: $('#birthday').val()
+		if($('#gender').val() === "") {
+			alert("성별을 선택해주세요");
+			return;
 		}
 
-		$.ajax({
-			type: "POST",
-			url: `/member/oauth`,
-			contentType: 'application/json',
-			data: JSON.stringify(signupData),
-			success : function(response) {
-				if(response.successStatus) {
-					alert("회원 정보 등록 성공");
-					window.location.href = "/";
-				}
-				else {
-					alert("회원가입 실패, 다시 시도하십시오");
-				}
+
+		const signupData = {
+			name: $('#name').val(),
+			nickname: $('#nickname').val(),
+			gender: $('#gender').val(),
+			birthday: $('#birthday').val(),
+			identifier: data.identifier
+		}
+
+		fetch(`/member/oauth`,{
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
 			},
-			error: function(xhr, status, error) {
-                console.error('AJAX request failed error:', status, error);
-            }
-		});
+			body: JSON.stringify(signupData)
+		})
+		.then(response => {
+			console.log(response);
+			if(response.ok) {
+				return response.json();
+			} else {
+				throw new Error(`오류 상태 코드: ${response.status}`);
+			}
+		})
+		.then(data => {
+			console.log(data);
+			alert("회원 정보 등록 성공");
+			window.location.href = data.redirectUri;
+		})
+		.catch(error => {
+			console.log(error);
+			alert("${data.errorMessage}");
+			window.location.href = data.redirectUri;
+		})
 	}
 /*]]>*/
 </script>

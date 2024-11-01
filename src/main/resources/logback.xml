@@ -15,7 +15,7 @@
     <logger name="jdbc.resultsettable" level="INFO"/>
     <logger name="jdbc.connection" level="INFO"/>
 
-    <root level="INFO">    <!-- INFO -->
+    <root level="DEBUG">    <!-- INFO -->
         <appender-ref ref="STDOUT" />
     </root>
 

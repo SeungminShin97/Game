@@ -1,8 +1,12 @@
 package Seungmin.Game.config;
 
 import Seungmin.Game.common.enums.Role;
-import Seungmin.Game.config.handlers.CustomAuthenticationFailureHandler;
-import Seungmin.Game.config.handlers.CustomAuthenticationSuccessHandler;
+import Seungmin.Game.config.handlers.Authentication.CustomAuthenticationFailureHandler;
+import Seungmin.Game.config.handlers.Authentication.CustomAuthenticationSuccessHandler;
+import Seungmin.Game.config.handlers.CustomCorsConfigurationSource;
+import Seungmin.Game.config.handlers.OAuth2.OAuth2FailureHandler;
+import Seungmin.Game.config.handlers.OAuth2.OAuth2SuccessHandler;
+import Seungmin.Game.domain.OAuth.OAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +24,11 @@ public class WebSecurityConfig {
 
     private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
     private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final OAuth2FailureHandler oAuth2FailureHandler;
+    private final OAuthService oAuthService;
+
+    private final CustomCorsConfigurationSource customCorsConfigurationSource;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -32,7 +41,8 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests((authorizerRequests) ->
                         authorizerRequests
                                 .requestMatchers("/user").authenticated()   // 인가 x / 인증 o
-                                .requestMatchers("/admin").hasRole(Role.Admin.name()) // 권한?
+//                                .requestMatchers("/admin").hasRole(Role.Admin.name()) // 권한?
+                                .requestMatchers("/admin").hasAuthority(Role.Admin.name())
                                 .anyRequest().permitAll())                 // 그 외의 사이트 다 허용
                 .formLogin((formLogin) ->
                         formLogin
@@ -40,14 +50,26 @@ public class WebSecurityConfig {
                                 .usernameParameter("loginId")
                                 .passwordParameter("password")
                                 .loginProcessingUrl("/member/login")
-//                                .defaultSuccessUrl("/", true)   // 로그인 성공 시 이동할 페이지
                                 .successHandler(customAuthenticationSuccessHandler)
                                 .failureHandler(customAuthenticationFailureHandler))
+                .oauth2Login((oAuth2LoginConfigurer) ->
+                        oAuth2LoginConfigurer
+                                .loginPage("/member")
+                                .successHandler(oAuth2SuccessHandler)
+                                .failureHandler(oAuth2FailureHandler)
+//                                .defaultSuccessUrl("/")
+                                .userInfoEndpoint((userInfoEndpointConfig) ->
+                                        userInfoEndpointConfig
+                                                .userService(oAuthService)
+                                        )
+                        )
                 .logout((logout) ->
                         logout          // logout을 하면 logoutfilter 생성 -> 자동으로 로그아웃 핸들러
                                 .logoutUrl("/member/logout")
                                 .logoutSuccessUrl("/")
                                 .deleteCookies("JSESSIONID"))
+                .cors(corsCustomizer -> corsCustomizer
+                        .configurationSource(customCorsConfigurationSource))
                 .csrf(AbstractHttpConfigurer::disable)
                 .build();
     }
