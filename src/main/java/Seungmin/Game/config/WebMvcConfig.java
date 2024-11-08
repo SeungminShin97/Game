@@ -23,14 +23,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 .excludePathPatterns("/css/**");
 
-        // 게시물 인증 인터셉터
+        // 인증 인터셉터
         registry.addInterceptor(authenticationInterceptor)
                 .addPathPatterns("/post/**", "/comment/**", "/member/oauth/**")
                 .excludePathPatterns("/post/list", "/post/view/**", "/comment/list/**");
 
         // 로그인 유저 정보 전달
         registry.addInterceptor(userInfoInterceptor)
-                .addPathPatterns("/**")
-                .excludePathPatterns("/oauth/kakao/callback");
+                .addPathPatterns("/**");
     }
 }

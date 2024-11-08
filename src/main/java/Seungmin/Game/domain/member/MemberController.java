@@ -95,4 +95,10 @@ public class MemberController {
     public boolean duplicateLoginId(@RequestBody final String loginId) {
         return memberService.existLoginId(loginId);
     }
+
+    @GetMapping("/member/duplicateNickname")
+    @ResponseBody
+    public boolean duplicateNickname(@RequestParam final String nickname) {
+        return memberService.existNickname(nickname);
+    }
 }

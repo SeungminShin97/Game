@@ -62,13 +62,11 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
         String name = oAuth2UserInfo.getName();
         Optional<Member> member = memberRepository.findByIdentifierAndProvider(identifier, provider);
         if(member.isEmpty()) {
-            int idx = email.indexOf("@");
-            String nickname = email.substring(0, idx);
             Member newMember = Member.builder()
                     .loginId(email)
                     .password(getRandomPassword())
                     .name(name)
-                    .nickname(nickname)
+                    .nickname(email)
                     .identifier(identifier)
                     .email(email)
                     .provider(provider)

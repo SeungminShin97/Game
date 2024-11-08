@@ -8,6 +8,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 @Getter
 public enum Provider {
+    LOCAL(null, null, null),
     KAKAO("kakao_account", "id", "email"),
     GOOGLE(null, "sub", "email");
 

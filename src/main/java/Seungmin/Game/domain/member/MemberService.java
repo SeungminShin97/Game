@@ -1,5 +1,7 @@
 package Seungmin.Game.domain.member;
 
+import Seungmin.Game.common.enums.Provider;
+import Seungmin.Game.common.enums.Role;
 import Seungmin.Game.common.exceptions.CustomException;
 import Seungmin.Game.common.exceptions.CustomExceptionCode;
 import Seungmin.Game.domain.member.memberDto.Member;
@@ -49,6 +51,8 @@ public class MemberService implements UserDetailsService {
     public Long saveMember(final MemberRequest memberRequest) {
         try {
             memberRequest.setNickname(memberRequest.getLoginId());
+            memberRequest.setRole(Role.User);
+            memberRequest.setProvider(Provider.LOCAL);
             String encodedPassword = passwordEncoder.encode(memberRequest.getPassword());
             Member member = memberRequest.toEntity(encodedPassword);
             memberRepository.save(member);
@@ -78,6 +82,21 @@ public class MemberService implements UserDetailsService {
     // 아이디 중복 검사
     public boolean existLoginId(final String loginId) {
         return memberRepository.findByLoginId(loginId).isEmpty();
+    }
+
+    /**
+     * 닉네임 중복검사
+     * @param nickname
+     * @return boolean
+     */
+    public boolean existNickname(final String nickname) {
+        if(memberRepository.findByNickname(nickname).isEmpty()) // 중복된 닉네임이 없을 경우
+            return true;
+        else {  // 중복된 닉네임이 있을 경우 자신의 닉네임인지 확인
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Member member = getMemberByAuthentication(authentication);
+            return member.getNickname().equals(nickname);
+        }
     }
 
     public MemberResponse getMemberById(final Long id) {
