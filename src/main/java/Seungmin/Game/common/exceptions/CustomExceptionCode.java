@@ -7,19 +7,22 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum CustomExceptionCode {
 
-    PostNotFoundException("게시글을 찾을 수 없습니다."),
-    PostSaveFailedException("게시글 저장 실패, 다시 시도해 주세요"),
-    PostUpdateFailedException("게시글 수정 실패, 다시 시도해 주세요"),
-    PostDeleteFailedException("게시글 삭제 실패, 다시 시도해 주세요"),
+    PostNotFoundException("Post not found."),
+    PostSaveFailedException("Failed to save the post. Please try again."),
+    PostUpdateFailedException("Failed to update the post. Please try again."),
+    PostDeleteFailedException("Failed to delete the post. Please try again."),
 
-    MemberSaveFaileException("회원 저장 실패, 다시 시도해 주세요"),
+    MemberSaveFailedException("Failed to save the member. Please try again."),
+    UnauthenticatedUserException("Unauthenticated user."),
 
-    CommentNotFoundException("댓글을 찾을 수 없습니다."),
+    CommentNotFoundException("Comment not found."),
 
-    FileCreateFailedException("파일 저장 중 오류가 발생했습니다."),
-    FileUpdateFailedException("파일 업데이트 중 오류가 발생했습니다."),
-    FileDeleteFailedException("파일 삭제 중 오류가 발생했습니다."),
-    FileNotFoundException("파일 검색 중 오류가 발생"),
+    FileCreateFailedException("An error occurred while saving the file."),
+    FileUpdateFailedException("An error occurred while updating the file."),
+    FileDeleteFailedException("An error occurred while deleting the file."),
+    FileNotFoundException("An error occurred while searching for the file."),
+
+    ChatSaveFailedException("An error occurred while saving the chat.")
     ;
 
     private final String errorMessage;
