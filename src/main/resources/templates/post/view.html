@@ -74,10 +74,11 @@
 <th:block layout:fragment="js">
 <script th:inline="javascript">
 /*<![CDATA[*/
-	window.onload = () => {
-		drawPost();
+
+    window.addEventListener('load', function() {
+        drawPost();
 		getComments();
-	}
+    });
 
 	const post = [[${post}]];
 	const files = [[${files}]];

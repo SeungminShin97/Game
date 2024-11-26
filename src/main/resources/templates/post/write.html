@@ -73,9 +73,10 @@
 <th:block layout:fragment="js">
 <script th:inline="javascript">
 /*<![CDATA[*/
-    window.onload = () => {
+
+    window.addEventListener('load', function() {
         renderPostInfo();
-    }
+    });
 
     let fileList = [];  // 파일 리스트
 

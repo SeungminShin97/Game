@@ -72,9 +72,9 @@
 /*<![CDATA[*/
     var pageState = {};
 
-    window.onload = function() {
+    window.addEventListener('load', function() {
         updatePostListByCategory();
-    }
+    });
 
     // 카테고리 클릭 이벤트 바인딩
     $(function() {
