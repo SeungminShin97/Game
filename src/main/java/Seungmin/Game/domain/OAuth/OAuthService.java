@@ -70,7 +70,7 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
                     .identifier(identifier)
                     .email(email)
                     .provider(provider)
-                    .role(Role.Not_registered)
+                    .role(Role.ROLE_NOT_REGISTERED)
                     .build();
             memberRepository.save(newMember);
             return newMember.toDto();

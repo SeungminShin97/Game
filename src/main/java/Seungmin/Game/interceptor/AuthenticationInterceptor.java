@@ -51,7 +51,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication != null) {
             for(GrantedAuthority authority : authentication.getAuthorities()) {
-                if(authority.getAuthority().equals(Role.Not_registered.name()))
+                if(authority.getAuthority().equals(Role.ROLE_NOT_REGISTERED.name()))
                     return true;
             }
         }

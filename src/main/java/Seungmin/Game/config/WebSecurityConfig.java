@@ -42,7 +42,7 @@ public class WebSecurityConfig {
                         authorizerRequests
                                 .requestMatchers("/user").authenticated()   // 인가 x / 인증 o
 //                                .requestMatchers("/admin").hasRole(Role.Admin.name()) // 권한?
-                                .requestMatchers("/admin").hasAuthority(Role.Admin.name())
+                                .requestMatchers("/admin").hasAuthority(Role.ROLE_ADMIN.name())
                                 .anyRequest().permitAll())                 // 그 외의 사이트 다 허용
                 .formLogin((formLogin) ->
                         formLogin

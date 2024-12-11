@@ -51,7 +51,7 @@ public class MemberService implements UserDetailsService {
     public Long saveMember(final MemberRequest memberRequest) {
         try {
             memberRequest.setNickname(memberRequest.getLoginId());
-            memberRequest.setRole(Role.User);
+            memberRequest.setRole(Role.ROLE_USER);
             memberRequest.setProvider(Provider.LOCAL);
             String encodedPassword = passwordEncoder.encode(memberRequest.getPassword());
             Member member = memberRequest.toEntity(encodedPassword);

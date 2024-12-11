@@ -98,7 +98,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
         this.nickname = memberRequest.getNickname();
         this.gender = memberRequest.getGender();
         this.birthday = memberRequest.getBirthday();
-        this.role = Role.User;
+        this.role = Role.ROLE_USER;
     }
 
     // 권한 반환

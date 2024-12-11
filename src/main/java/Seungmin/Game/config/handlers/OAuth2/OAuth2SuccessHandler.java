@@ -34,7 +34,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     }
 
     private String getRedierctUrlByRole(Role role, String identifier) {
-        if(role == Role.Not_registered) {
+        if(role == Role.ROLE_NOT_REGISTERED) {
             return "/member/oauth/" + identifier;
         }
         return "/";
