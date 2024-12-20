@@ -79,7 +79,7 @@
     }
 
     function connectWebSocket() {
-        socket = new WebSocket(`ws://localhost:8080/ws/chat`);
+        socket = new WebSocket(`ws://localhost:8080/ws/public`);
 
         socket.onopen = function() {
             let enterMessage = {
