@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko" layout:decorate="~{layout/basic}" xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<th:block layout:fragment="title">
+	<title>Homepage</title>
+</th:block>
+
+<th:block layout:fragment="contentFragment">
+	<div class="memberInfo">
+		<p id="memberInfo" th:text="회원정보" style="font-size: 20px;"></p>
+	</div>
+
+	<div class="content">
+		<tr>
+			<th>닉네임</th>
+		</tr>
+	</div>
+</th:block>
+
+<th:block layout:fragment="js">
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+
+
+		/*]]>*/
+	</script>
+</th:block>
+
+
+</html>
+
+

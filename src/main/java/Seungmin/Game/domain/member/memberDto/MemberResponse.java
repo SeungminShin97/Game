@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 public class MemberResponse {
 
+    private Long id;
     private String loginId;
     private String email;
     private String name;

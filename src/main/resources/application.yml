@@ -12,12 +12,13 @@ spring:
   jpa:
     open-in-view: false
     generate-ddl: true
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MariaDBDialect
-        format_sql: true
-        show_sql: true
+        format_sql: false
+        show_sql: false
+        use_sql_comments: false
         ddl-auto: update
 
   mvc:
@@ -30,6 +31,12 @@ spring:
       max-file-size: 5000MB
       max-request-size: 5000MB
 
+logging:
+  level:
+    org.hibernate.SQL: OFF
+    org.hibernate.type.descriptor.sql.BasicBinder: OFF
+    com.zaxxer.hikari.HikariDataSource: OFF
+    com.zaxxer.hikari.pool.HikariPool: OFF
 
 file:
   upload-dir: F:\Spring\Game\Upload

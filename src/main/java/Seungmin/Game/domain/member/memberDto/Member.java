@@ -80,6 +80,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     public MemberResponse toDto() {
         return MemberResponse.builder()
+                .id(id)
                 .loginId(loginId)
                 .email(email)
                 .name(name)
@@ -90,6 +91,14 @@ public class Member extends BaseTimeEntity implements UserDetails {
                 .role(role)
                 .provider(provider)
                 .identifier(identifier)
+                .build();
+    }
+
+    public MemberChatDto toChatDto() {
+        return MemberChatDto.builder()
+                .id(id)
+                .loginId(loginId)
+                .nickname(nickname)
                 .build();
     }
 

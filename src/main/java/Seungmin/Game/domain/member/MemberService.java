@@ -4,12 +4,13 @@ import Seungmin.Game.common.enums.Provider;
 import Seungmin.Game.common.enums.Role;
 import Seungmin.Game.common.exceptions.CustomException;
 import Seungmin.Game.common.exceptions.CustomExceptionCode;
+import Seungmin.Game.config.handlers.Authentication.CustomAnonymousAuthenticationToken;
 import Seungmin.Game.domain.member.memberDto.Member;
+import Seungmin.Game.domain.member.memberDto.MemberChatDto;
 import Seungmin.Game.domain.member.memberDto.MemberRequest;
 import Seungmin.Game.domain.member.memberDto.MemberResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -58,7 +59,7 @@ public class MemberService implements UserDetailsService {
             memberRepository.save(member);
             return member.getId();
         } catch (Exception e) {
-            throw new CustomException(CustomExceptionCode.MemberSaveFaileException);
+            throw new CustomException(CustomExceptionCode.MemberSaveFailedException);
         }
     }
 
@@ -104,6 +105,15 @@ public class MemberService implements UserDetailsService {
         return member.toDto();
     }
 
+    public Member getMemberEntityById(final Long id) {
+        return memberRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("유저 검색 실패"));
+    }
+
+    public MemberChatDto getMemberChatDtoById(final Long id) {
+        Member member = memberRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("유저 검색 실패"));
+        return member.toChatDto();
+    }
+
     public MemberResponse getMemberByIdentifier(String identifier) {
             Member member = memberRepository.findByIdentifier(identifier).orElse(null);
             if(member != null)
@@ -113,24 +123,20 @@ public class MemberService implements UserDetailsService {
     }
 
     public Member getMemberByAuthentication(Authentication authentication) {
-        if (confirmAuthenticationIsAnonymous(authentication)) {
-            if(authentication instanceof UsernamePasswordAuthenticationToken) {             // 일반 로그인
-                String loginId = authentication.getName();
-                return memberRepository.findByLoginId(loginId)
-                        .orElseThrow(() -> new UsernameNotFoundException("유저 검색 실패"));
-            }
-            else {                                                                          // oauth2 로그인
-                String identifier = authentication.getName();
-                return memberRepository.findByIdentifier(identifier).orElseThrow(() -> new UsernameNotFoundException("유저 검색 실패"));
-            }
+        if(confirmAuthenticationIsAnonymous(authentication))
+            throw new CustomException(CustomExceptionCode.UnauthenticatedUserException);
+
+        if(authentication instanceof UsernamePasswordAuthenticationToken) {             // 일반 로그인
+            String loginId = authentication.getName();
+            return memberRepository.findByLoginId(loginId)
+                    .orElseThrow(() -> new UsernameNotFoundException("유저 검색 실패"));
+        } else {                                                                          // oauth2 로그인
+            String identifier = authentication.getName();
+            return memberRepository.findByIdentifier(identifier).orElseThrow(() -> new UsernameNotFoundException("유저 검색 실패"));
         }
-        throw new UsernameNotFoundException("비로그인 유저");
     }
 
     public boolean confirmAuthenticationIsAnonymous(Authentication authentication) {
-        if(!authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken)
-            throw new UsernameNotFoundException("비로그인 유저");
-        else
-            return true;
+        return authentication == null || !authentication.isAuthenticated() || authentication instanceof CustomAnonymousAuthenticationToken;
     }
 }

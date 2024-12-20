@@ -22,7 +22,9 @@ public enum CustomExceptionCode {
     FileDeleteFailedException("An error occurred while deleting the file."),
     FileNotFoundException("An error occurred while searching for the file."),
 
-    ChatSaveFailedException("An error occurred while saving the chat.")
+    ChatSaveFailedException("An error occurred while saving the chat."),
+
+    ChatRoomNotFoundException("ChatRoom not found")
     ;
 
     private final String errorMessage;

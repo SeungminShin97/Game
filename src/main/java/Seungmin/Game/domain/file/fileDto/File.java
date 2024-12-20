@@ -1,5 +1,6 @@
 package Seungmin.Game.domain.file.fileDto;
 
+import Seungmin.Game.domain.chat.chatMessage.chatMessage.ChatMessage;
 import Seungmin.Game.domain.post.postDto.Post;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,10 @@ public class File {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chat_message_id")
+    private ChatMessage chatMessage;
 
     @Column
     private String originalFileName;

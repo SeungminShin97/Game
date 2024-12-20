@@ -1,6 +1,7 @@
 package Seungmin.Game.config;
 
 import Seungmin.Game.common.enums.Role;
+import Seungmin.Game.config.handlers.Authentication.CustomAnonymousAuthenticationFilter;
 import Seungmin.Game.config.handlers.Authentication.CustomAuthenticationFailureHandler;
 import Seungmin.Game.config.handlers.Authentication.CustomAuthenticationSuccessHandler;
 import Seungmin.Game.config.handlers.CustomCorsConfigurationSource;
@@ -38,6 +39,9 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
+                .anonymous((anonymous) ->
+                        anonymous
+                                .authenticationFilter(new CustomAnonymousAuthenticationFilter("custom-key")))   // 익명유저 커스텀 키
                 .authorizeHttpRequests((authorizerRequests) ->
                         authorizerRequests
                                 .requestMatchers("/user").authenticated()   // 인가 x / 인증 o

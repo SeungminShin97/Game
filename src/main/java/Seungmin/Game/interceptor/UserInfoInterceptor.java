@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -26,7 +25,7 @@ public class UserInfoInterceptor implements HandlerInterceptor {
                 Member member = memberService.getMemberByAuthentication(authentication);
                 String nickname = member.getNickname();
                 modelAndView.addObject("loginUser", nickname);
-            } catch(UsernameNotFoundException e){
+            } catch(Exception e){
                 modelAndView.addObject("loginUser", null);
             }
         }

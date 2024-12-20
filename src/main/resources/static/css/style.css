@@ -293,3 +293,106 @@ footer {
     object-fit: cover; /* 이미지 비율을 유지하면서 크기 조절 */
     cursor: pointer; /* 클릭 가능하도록 커서 변경 */
 }
+
+/* 채팅 박스 */
+.chat-public-container {
+    width: 100%;
+    max-width: 400px;
+    height: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* 메시지 영역 */
+.chat-public-messages {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* 메시지 */
+.message {
+    max-width: 70%;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+.message.user {
+    padding: 10px 15px;
+    align-self: flex-end;
+    background: linear-gradient(145deg, #0084ff, #0069d9);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+.message.other {
+    align-self: flex-start;
+}
+
+.message .user-info {
+    font-size: 0.8em;
+    color: gray;
+    display: block;
+}
+
+.message.other .message-content {
+    background: linear-gradient(145deg, #f1f3f5, #e2e6ea);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 1em;
+    color: #333;
+    padding: 7px 10px;
+    border-radius: 12px;
+    display: inline-block; /* 배경색 적용 */
+}
+
+
+/* 입력 영역 */
+.chat-public-input {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #e0e0e0;
+    background: linear-gradient(145deg, #f9f9f9, #ffffff);
+}
+
+.chat-public-input input[type="text"] {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.chat-public-input input[type="text"]:focus {
+    border-color: #0084ff;
+    box-shadow: 0 0 5px rgba(0, 132, 255, 0.5);
+}
+
+.chat-public-input button {
+    margin-left: 10px;
+    padding: 10px 20px;
+    background: linear-gradient(145deg, #0084ff, #0069d9);
+    border: none;
+    border-radius: 20px;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.chat-public-input button:hover {
+    background: #005bb5;
+    box-shadow: 0 4px 6px rgba(0, 91, 181, 0.3);
+}
